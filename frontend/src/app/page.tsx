@@ -7,7 +7,31 @@ import Button from "@/components/ui/button";
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      <SiteNavbar />
+      {/* Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">SkillXIntell</h1>
+          </div>
+          <nav className="hidden md:flex gap-6 items-center">
+            <Link href="#features" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+              Features
+            </Link>
+            <Link href="#sectors" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+              Sectors
+            </Link>
+            <Link href="/login" className="text-foreground/70 hover:text-primary transition-colors font-medium">
+              Login
+            </Link>
+            <Link href="/register" className="px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-md hover:shadow-lg">
+              Get Started
+            </Link>
+          </nav>
+        </div>
+      </header>
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
@@ -17,7 +41,7 @@ export default function Home() {
           </div>
           <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground">
             Holistic Academic & Professional
-            <span className="block bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent mt-2">
+            <span className="block bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent mt-2">
               Skill Intelligence
             </span>
           </h2>
@@ -26,7 +50,9 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center pt-4">
             <Link href="/register">
-              <Button size="lg">Get Started Free</Button>
+              <button className="px-8 py-4 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                Get Started Free
+              </button>
             </Link>
             <Link href="/login">
               <Button variant="outline" size="lg">Login</Button>
@@ -41,7 +67,7 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-8">
           {/* Healthcare */}
           <div className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-xl hover:border-primary/50 transition-all transform hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mb-4 shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-primary to-primary/70 flex items-center justify-center mb-4 shadow-lg">
               <Activity className="h-7 w-7 text-white" />
             </div>
             <h4 className="text-xl font-bold mb-3 text-foreground">Healthcare Informatics</h4>
@@ -52,7 +78,7 @@ export default function Home() {
 
           {/* Agriculture */}
           <div className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-xl hover:border-secondary/50 transition-all transform hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-secondary to-secondary/70 flex items-center justify-center mb-4 shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-secondary to-secondary/70 flex items-center justify-center mb-4 shadow-lg">
               <TrendingUp className="h-7 w-7 text-white" />
             </div>
             <h4 className="text-xl font-bold mb-3 text-foreground">Agricultural Technology</h4>
@@ -63,7 +89,7 @@ export default function Home() {
 
           {/* Urban */}
           <div className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-xl hover:border-accent/50 transition-all transform hover:-translate-y-1">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center mb-4 shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-linear-to-br from-accent to-accent/70 flex items-center justify-center mb-4 shadow-lg">
               <Target className="h-7 w-7 text-white" />
             </div>
             <h4 className="text-xl font-bold mb-3 text-foreground">Urban & Smart Cities</h4>
@@ -76,7 +102,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section id="features" className="container mx-auto px-4 py-16">
-        <div className="bg-gradient-to-br from-muted to-primary/5 rounded-3xl p-12">
+        <div className="bg-linear-to-br from-muted to-primary/5 rounded-3xl p-12">
           <h3 className="text-3xl font-bold text-center mb-12 text-foreground">Key Features</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
