@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BarChart3, TrendingUp, Target, Award, Brain } from "lucide-react";
 
 interface CrossSectorAnalytics {
@@ -34,11 +34,7 @@ export default function AnalyticsDashboard() {
     const [analytics, setAnalytics] = useState<CrossSectorAnalytics | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
-
-    const fetchAnalytics = async () => {
+    const fetchAnalytics = useCallback(async () => {
         try {
             // TODO: Replace with actual API call
             // const response = await fetch('/api/analytics/cross-sector/overview');
@@ -76,11 +72,15 @@ export default function AnalyticsDashboard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center justify-center min-h-100">
                 <div className="text-muted-foreground">Loading analytics...</div>
             </div>
         );
@@ -320,7 +320,7 @@ export default function AnalyticsDashboard() {
                 <div className="space-y-3">
                     <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
                         <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                                 <TrendingUp className="h-4 w-4 text-primary" />
                             </div>
                             <div>
@@ -334,7 +334,7 @@ export default function AnalyticsDashboard() {
 
                     <div className="p-4 rounded-lg bg-agriculture/5 border border-agriculture/20">
                         <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-agriculture/10 flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-agriculture/10 flex items-center justify-center shrink-0">
                                 <Target className="h-4 w-4 text-agriculture" />
                             </div>
                             <div>
@@ -348,7 +348,7 @@ export default function AnalyticsDashboard() {
 
                     <div className="p-4 rounded-lg bg-healthcare/5 border border-healthcare/20">
                         <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-healthcare/10 flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-healthcare/10 flex items-center justify-center shrink-0">
                                 <Award className="h-4 w-4 text-healthcare" />
                             </div>
                             <div>
