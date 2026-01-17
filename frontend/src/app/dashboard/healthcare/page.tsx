@@ -202,46 +202,47 @@ export default function HealthcareDashboard() {
 
             {/* Quick Actions */}
             <div className="grid md:grid-cols-3 gap-6">
-                {[{
-                    href: "/dashboard/skills?sector=HEALTHCARE",
-                    icon: <Target className="h-6 w-6 text-blue-600" />,
-                    title: "Skills Tracker",
-                    copy: "Manage healthcare IT skills, proficiencies, and gaps.",
-                    accent: "blue",
-                }, {
-                    href: "/dashboard/certifications?sector=HEALTHCARE",
-                    icon: <Award className="h-6 w-6 text-indigo-600" />,
-                    title: "Certifications",
-                    copy: "Track CPHIMS, CAHIMS, and compliance credentials.",
-                    accent: "indigo",
-                }, {
-                    href: "/dashboard/projects?sector=HEALTHCARE",
-                    icon: <Briefcase className="h-6 w-6 text-emerald-600" />,
-                    title: "Projects",
-                    copy: "Showcase healthcare informatics and integration projects.",
-                    accent: "emerald",
-                }].map((item) => (
-                    <Link
-                        key={item.title}
-                        href={item.href}
-                        className="group relative p-8 rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-lg shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-                    >
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundImage: "radial-gradient(circle at 80% 0%, rgba(59,130,246,0.12), transparent 45%)" }}></div>
-                        <div className="relative flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center shadow-inner">
-                                {item.icon}
-                            </div>
-                            <h3 className="font-bold text-lg text-slate-900 tracking-tight">{item.title}</h3>
+                {/* Skills Tracker Card - Modernized */}
+                <Link
+                    href="/dashboard/skills?sector=HEALTHCARE"
+                    className="group relative p-8 rounded-2xl border-2 border-blue-200/80 bg-white/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundImage: "radial-gradient(circle at 80% 0%, rgba(59,130,246,0.13), transparent 45%)" }}></div>
+                    <div className="relative flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shadow-inner">
+                            <Target className="h-6 w-6 text-blue-600" />
                         </div>
-                        <p className="relative text-sm text-slate-600 leading-relaxed">
-                            {item.copy}
-                        </p>
-                        <span className="relative mt-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-900">
-                            Open
-                            <span className="transition-transform group-hover:translate-x-1">→</span>
-                        </span>
-                    </Link>
-                ))}
+                        <h3 className="font-black text-lg text-blue-800 tracking-tight">Skills Tracker</h3>
+                    </div>
+                    <p className="relative text-sm text-slate-700 leading-relaxed font-medium">
+                        Manage healthcare IT skills, proficiencies, and gaps.
+                    </p>
+                    <span className="relative mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-700 group-hover:text-blue-900">
+                        Open
+                        <span className="transition-transform group-hover:translate-x-1">→</span>
+                    </span>
+                </Link>
+                {/* Certifications Card - Modernized */}
+                <Link
+                    href="/dashboard/certifications?sector=HEALTHCARE"
+                    className="group relative p-8 rounded-2xl border-2 border-indigo-200/80 bg-white/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                >
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundImage: "radial-gradient(circle at 80% 0%, rgba(99,102,241,0.13), transparent 45%)" }}></div>
+                    <div className="relative flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center shadow-inner">
+                            <Award className="h-6 w-6 text-indigo-600" />
+                        </div>
+                        <h3 className="font-black text-lg text-indigo-800 tracking-tight">Certifications</h3>
+                    </div>
+                    <p className="relative text-sm text-slate-700 leading-relaxed font-medium">
+                        Track CPHIMS, CAHIMS, and compliance credentials.
+                    </p>
+                    <span className="relative mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-700 group-hover:text-indigo-900">
+                        Open
+                        <span className="transition-transform group-hover:translate-x-1">→</span>
+                    </span>
+                </Link>
+                {/* ...existing code for Projects card... */}
             </div>
 
             {/* Recommended Courses Section */}
