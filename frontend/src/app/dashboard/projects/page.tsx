@@ -11,30 +11,30 @@ export default function ProjectsPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h1 className="text-3xl font-bold text-foreground">
                         Projects
                     </h1>
-                    <p className="text-muted-foreground">
-                        Viewing projects for: <span className="font-semibold text-primary">{sector}</span>
+                    <p className="text-muted-foreground font-medium">
+                        Viewing projects for: <span className="font-bold text-secondary">{sector}</span>
                     </p>
                 </div>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                    <Plus className="h-4 w-4" />
+                <button className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-secondary to-secondary/80 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                    <Plus className="h-5 w-5" />
                     <span>Add Project</span>
                 </button>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center border border-dashed border-gray-300 dark:border-gray-700">
-                <div className="mx-auto w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4">
-                    <Briefcase className="h-8 w-8 text-green-500" />
+            <div className="bg-card rounded-2xl shadow-xl p-16 text-center border-2 border-dashed border-border">
+                <div className="mx-auto w-20 h-20 bg-gradient-to-br from-secondary to-secondary/70 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <Briefcase className="h-10 w-10 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-2xl font-bold text-foreground mb-3">
                     No Projects Found
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 max-w-sm mx-auto mb-6">
+                <p className="text-muted-foreground max-w-sm mx-auto mb-8 leading-relaxed">
                     You haven't added any {sector.toLowerCase()} projects yet. Showcase your practical experience.
                 </p>
-                <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                <button className="px-6 py-3 bg-gradient-to-r from-secondary to-secondary/80 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
                     Add Your First Project
                 </button>
             </div>

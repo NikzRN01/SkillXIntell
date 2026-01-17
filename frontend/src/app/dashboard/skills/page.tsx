@@ -79,8 +79,8 @@ export default function SkillsPage() {
         return (
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading skills...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground font-medium">Loading skills...</p>
                 </div>
             </div>
         );
@@ -90,30 +90,30 @@ export default function SkillsPage() {
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-3xl font-bold text-foreground">
                     My Skills
                 </h1>
                 <Link
                     href="/dashboard/skills/add"
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                 >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-5 w-5" />
                     <span>Add Skill</span>
                 </Link>
             </div>
 
             {/* Filters */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+            <div className="bg-card rounded-2xl shadow-lg p-6 border-2 border-border">
                 <div className="flex flex-col sm:flex-row gap-4">
                     {/* Search */}
                     <div className="flex-1 relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search skills..."
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
                         />
                     </div>
 
@@ -122,7 +122,7 @@ export default function SkillsPage() {
                         <select
                             value={sectorFilter}
                             onChange={(e) => setSectorFilter(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
                         >
                             <option value="">All Sectors</option>
                             <option value="HEALTHCARE">Healthcare</option>
@@ -135,34 +135,34 @@ export default function SkillsPage() {
 
             {/* Skills Grid */}
             {filteredSkills.length === 0 ? (
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <div className="bg-card rounded-2xl shadow-xl p-16 text-center border-2 border-dashed border-border">
+                    <p className="text-muted-foreground mb-6 text-lg">
                         {searchTerm || sectorFilter
                             ? "No skills found matching your filters"
                             : "You haven't added any skills yet"}
                     </p>
                     <Link
                         href="/dashboard/skills/add"
-                        className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-5 w-5" />
                         <span>Add Your First Skill</span>
                     </Link>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredSkills.map((skill) => (
                         <div
                             key={skill.id}
-                            className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
+                            className="bg-card rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:-translate-y-1 border-2 border-border"
                         >
                             {/* Skill Header */}
-                            <div className="flex items-start justify-between mb-3">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            <div className="flex items-start justify-between mb-4">
+                                <h3 className="text-lg font-bold text-foreground">
                                     {skill.name}
                                 </h3>
                                 {skill.verified && (
-                                    <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded">
+                                    <span className="px-3 py-1 bg-secondary/20 text-secondary text-xs rounded-xl font-semibold border border-secondary/30">
                                         Verified
                                     </span>
                                 )}
@@ -170,10 +170,10 @@ export default function SkillsPage() {
 
                             {/* Category & Sector */}
                             <div className="space-y-2 mb-4">
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                <p className="text-sm text-muted-foreground font-medium">
                                     {skill.category.replace(/_/g, " ")}
                                 </p>
-                                <span className="inline-block px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded">
+                                <span className="inline-block px-3 py-1 bg-accent/20 text-accent text-xs rounded-xl font-semibold border border-accent/30">
                                     {skill.sector}
                                 </span>
                             </div>
@@ -181,20 +181,20 @@ export default function SkillsPage() {
                             {/* Proficiency */}
                             <div className="mb-4">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                                    <span className="text-sm text-muted-foreground font-semibold">
                                         Proficiency
                                     </span>
                                     <span
-                                        className={`px-2 py-1 text-xs rounded ${getProficiencyColor(
+                                        className={`px-3 py-1 text-xs rounded-xl font-semibold ${getProficiencyColor(
                                             skill.proficiencyLevel
                                         )}`}
                                     >
                                         {getProficiencyLabel(skill.proficiencyLevel)}
                                     </span>
                                 </div>
-                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div className="w-full bg-muted rounded-full h-3 shadow-inner">
                                     <div
-                                        className="bg-blue-600 h-2 rounded-full transition-all"
+                                        className="bg-gradient-to-r from-primary to-accent h-3 rounded-full transition-all shadow-md"
                                         style={{ width: `${(skill.proficiencyLevel / 5) * 100}%` }}
                                     />
                                 </div>
@@ -202,24 +202,24 @@ export default function SkillsPage() {
 
                             {/* Description */}
                             {skill.description && (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+                                <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
                                     {skill.description}
                                 </p>
                             )}
 
                             {/* Tags */}
                             {skill.tags && skill.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1">
+                                <div className="flex flex-wrap gap-2">
                                     {skill.tags.slice(0, 3).map((tag, index) => (
                                         <span
                                             key={index}
-                                            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded"
+                                            className="px-3 py-1 bg-muted text-muted-foreground text-xs rounded-lg font-medium"
                                         >
                                             {tag}
                                         </span>
                                     ))}
                                     {skill.tags.length > 3 && (
-                                        <span className="px-2 py-1 text-gray-500 text-xs">
+                                        <span className="px-3 py-1 text-muted-foreground text-xs font-medium">
                                             +{skill.tags.length - 3} more
                                         </span>
                                     )}
@@ -231,32 +231,32 @@ export default function SkillsPage() {
             )}
 
             {/* Stats */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="bg-card rounded-2xl shadow-lg p-8 border-2 border-border">
+                <h2 className="text-xl font-bold text-foreground mb-6">
                     Skills Overview
                 </h2>
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                        <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                <div className="grid grid-cols-3 gap-6">
+                    <div className="text-center p-4 rounded-xl bg-primary/10 border-2 border-primary/20">
+                        <div className="text-4xl font-bold text-primary">
                             {skills.length}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <div className="text-sm text-muted-foreground font-semibold mt-2">
                             Total Skills
                         </div>
                     </div>
-                    <div className="text-center">
-                        <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                    <div className="text-center p-4 rounded-xl bg-secondary/10 border-2 border-secondary/20">
+                        <div className="text-4xl font-bold text-secondary">
                             {skills.filter((s) => s.verified).length}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <div className="text-sm text-muted-foreground font-semibold mt-2">
                             Verified
                         </div>
                     </div>
-                    <div className="text-center">
-                        <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                    <div className="text-center p-4 rounded-xl bg-accent/10 border-2 border-accent/20">
+                        <div className="text-4xl font-bold text-accent">
                             {skills.filter((s) => s.proficiencyLevel >= 4).length}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <div className="text-sm text-muted-foreground font-semibold mt-2">
                             Expert Level
                         </div>
                     </div>
