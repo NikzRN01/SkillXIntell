@@ -30,22 +30,53 @@ export default function DashboardPage() {
     return (
         <div className="space-y-8">
             {/* Welcome Section */}
-            <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-8 md:p-10 overflow-hidden shadow-xl">
-                <div className="absolute inset-0 bg-grid-white/10"></div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="relative rounded-2xl p-8 md:p-10 overflow-hidden shadow-2xl bg-white/80 border border-slate-200/80 backdrop-blur-xl">
+                <div className="absolute inset-0 pointer-events-none" aria-hidden>
+                    <div
+                        className="absolute inset-0 opacity-70"
+                        style={{
+                            backgroundImage:
+                                "radial-gradient(circle at 20% 20%, rgba(59,130,246,0.12), transparent 38%), radial-gradient(circle at 80% 10%, rgba(168,85,247,0.12), transparent 35%), radial-gradient(circle at 50% 100%, rgba(14,165,233,0.14), transparent 40%)",
+                        }}
+                    ></div>
+                    <div
+                        className="absolute inset-0 opacity-30"
+                        style={{
+                            backgroundImage:
+                                "linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px), linear-gradient(180deg, rgba(15,23,42,0.05) 1px, transparent 1px)",
+                            backgroundSize: "24px 24px",
+                        }}
+                    ></div>
+                </div>
                 <div className="relative">
-                    <div className="flex items-center gap-3 mb-3">
-                        <Sparkles className="h-6 w-6 text-yellow-300" />
-                        <span className="text-blue-100 font-semibold">Welcome back!</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full bg-slate-900 text-white text-sm font-semibold shadow-lg shadow-blue-200/60">
+                        <Sparkles className="h-4 w-4 text-yellow-400" />
+                        <span>Dashboard</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
-                        Hi, {user.name}! 👋
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-1 drop-shadow-sm">
+                        <span className="typewriter">Hi, {user.name}</span>
                     </h1>
-                    <p className="text-xl text-blue-100 max-w-2xl">
-                        Continue your journey to master skills in Healthcare, Agriculture, and Urban Technology
-                    </p>
                 </div>
             </div>
+
+            <style jsx>{`
+                .typewriter {
+                    display: inline-block;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    border-right: 3px solid #0f172a;
+                    animation: typing 1.6s steps(12) forwards, caret 0.7s step-end 3 forwards;
+                }
+                @keyframes typing {
+                    from { width: 0; }
+                    to { width: 12ch; }
+                }
+                @keyframes caret {
+                    0% { border-color: #0f172a; }
+                    50% { border-color: transparent; }
+                    100% { border-color: transparent; }
+                }
+            `}</style>
 
             {/* Dashboard Navigation Grid */}
             <div>
@@ -54,19 +85,19 @@ export default function DashboardPage() {
                     {/* Healthcare */}
                     <button
                         onClick={() => router.push('/dashboard/healthcare')}
-                        className="group relative bg-white rounded-2xl p-8 border-2 border-blue-100 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 text-left hover:-translate-y-1"
+                        className="group relative bg-white/85 rounded-2xl p-8 border border-blue-100 hover:border-blue-300 hover:shadow-[0_25px_60px_-25px_rgba(59,130,246,0.55)] transition-all duration-300 text-left hover:-translate-y-1 backdrop-blur-lg"
                     >
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full opacity-50"></div>
+                        <div className="absolute top-2 right-3 text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-1 rounded-full border border-blue-100">Live</div>
                         <div className="relative">
-                            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                                <Activity className="h-8 w-8 text-white" />
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform bg-blue-600 text-white">
+                                <Activity className="h-8 w-8" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Healthcare</h3>
+                            <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">Healthcare</h3>
                             <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                                Medical coding, EHR systems, and clinical informatics
+                                Clinical informatics, EHR workflows, and care quality metrics.
                             </p>
                             <div className="flex items-center text-blue-600 font-semibold text-sm group-hover:gap-2 transition-all">
-                                <span>View Dashboard</span>
+                                <span>Open dashboard</span>
                                 <span className="group-hover:translate-x-1 transition-transform">→</span>
                             </div>
                         </div>
@@ -75,19 +106,19 @@ export default function DashboardPage() {
                     {/* Agriculture */}
                     <button
                         onClick={() => router.push('/dashboard/agriculture')}
-                        className="group relative bg-white rounded-2xl p-8 border-2 border-green-100 hover:border-green-300 hover:shadow-2xl transition-all duration-300 text-left hover:-translate-y-1"
+                        className="group relative bg-white/85 rounded-2xl p-8 border border-green-100 hover:border-green-300 hover:shadow-[0_25px_60px_-25px_rgba(34,197,94,0.55)] transition-all duration-300 text-left hover:-translate-y-1 backdrop-blur-lg"
                     >
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-bl-full opacity-50"></div>
+                        <div className="absolute top-2 right-3 text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">Insights</div>
                         <div className="relative">
-                            <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                                <TrendingUp className="h-8 w-8 text-white" />
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform bg-green-600 text-white">
+                                <TrendingUp className="h-8 w-8" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Agriculture</h3>
+                            <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">Agriculture</h3>
                             <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                                Precision farming, IoT sensors, and agritech projects
+                                Precision farming telemetry, IoT field health, and yield forecasts.
                             </p>
                             <div className="flex items-center text-green-600 font-semibold text-sm group-hover:gap-2 transition-all">
-                                <span>View Dashboard</span>
+                                <span>Open dashboard</span>
                                 <span className="group-hover:translate-x-1 transition-transform">→</span>
                             </div>
                         </div>
@@ -96,19 +127,19 @@ export default function DashboardPage() {
                     {/* Urban */}
                     <button
                         onClick={() => router.push('/dashboard/urban')}
-                        className="group relative bg-white rounded-2xl p-8 border-2 border-purple-100 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 text-left hover:-translate-y-1"
+                        className="group relative bg-white/85 rounded-2xl p-8 border border-purple-100 hover:border-purple-300 hover:shadow-[0_25px_60px_-25px_rgba(147,51,234,0.55)] transition-all duration-300 text-left hover:-translate-y-1 backdrop-blur-lg"
                     >
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full opacity-50"></div>
+                        <div className="absolute top-2 right-3 text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full border border-purple-100">Preview</div>
                         <div className="relative">
-                            <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                                <Building2 className="h-8 w-8 text-white" />
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform bg-purple-600 text-white">
+                                <Building2 className="h-8 w-8" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Urban & Smart Cities</h3>
+                            <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">Urban & Smart Cities</h3>
                             <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                                GIS, smart infrastructure, and urban planning
+                                Mobility, GIS overlays, smart infrastructure, and readiness scores.
                             </p>
                             <div className="flex items-center text-purple-600 font-semibold text-sm group-hover:gap-2 transition-all">
-                                <span>View Dashboard</span>
+                                <span>Open dashboard</span>
                                 <span className="group-hover:translate-x-1 transition-transform">→</span>
                             </div>
                         </div>
@@ -117,19 +148,19 @@ export default function DashboardPage() {
                     {/* Analytics */}
                     <button
                         onClick={() => router.push('/dashboard/analytics')}
-                        className="group relative bg-white rounded-2xl p-8 border-2 border-orange-100 hover:border-orange-300 hover:shadow-2xl transition-all duration-300 text-left hover:-translate-y-1"
+                        className="group relative bg-white/85 rounded-2xl p-8 border border-orange-100 hover:border-orange-300 hover:shadow-[0_25px_60px_-25px_rgba(249,115,22,0.55)] transition-all duration-300 text-left hover:-translate-y-1 backdrop-blur-lg"
                     >
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full opacity-50"></div>
+                        <div className="absolute top-2 right-3 text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full border border-orange-100">Reports</div>
                         <div className="relative">
-                            <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-amber-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                                <BarChart3 className="h-8 w-8 text-white" />
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform bg-orange-600 text-white">
+                                <BarChart3 className="h-8 w-8" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-2">Analytics</h3>
+                            <h3 className="text-xl font-semibold text-slate-900 mb-2 tracking-tight">Analytics</h3>
                             <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                                Skill gap analysis, career readiness, and AI insights
+                                Skill gaps, readiness scores, and AI-driven recommendations.
                             </p>
                             <div className="flex items-center text-orange-600 font-semibold text-sm group-hover:gap-2 transition-all">
-                                <span>View Dashboard</span>
+                                <span>Open dashboard</span>
                                 <span className="group-hover:translate-x-1 transition-transform">→</span>
                             </div>
                         </div>
