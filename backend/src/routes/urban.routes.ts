@@ -18,6 +18,7 @@ router.delete('/certifications/:id', urbanController.deleteUrbanCertification);
 
 // Urban projects
 router.get('/projects', urbanController.getUrbanProjects);
+router.get('/projects/:id', urbanController.getUrbanProject);
 router.post('/projects', urbanController.addUrbanProject);
 router.put('/projects/:id', urbanController.updateUrbanProject);
 router.delete('/projects/:id', urbanController.deleteUrbanProject);

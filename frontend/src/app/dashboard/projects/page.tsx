@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Briefcase, Plus, Calendar, Trash2, Github, Globe, X, Users } from "lucide-react";
+import { Briefcase, Plus, Calendar, Trash2, Github, Globe, X, Users, Search, Pencil } from "lucide-react";
+import Link from "next/link";
 
 interface Project {
     id: string;
@@ -46,6 +47,7 @@ export default function ProjectsPage() {
     const searchParams = useSearchParams();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
     const [sectorFilter, setSectorFilter] = useState(searchParams.get("sector") || "");
     const [showAddModal, setShowAddModal] = useState(false);
     const [formSector, setFormSector] = useState(searchParams.get("sector") || "HEALTHCARE");
@@ -277,18 +279,13 @@ export default function ProjectsPage() {
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-foreground">Projects</h1>
-                    <p className="text-muted-foreground font-medium">
-                        {sectorFilter
-                            ? `Viewing ${sectorFilter.toLowerCase()} projects`
-                            : "All your professional projects"}
-                    </p>
-                </div>
+                <h1 className="text-3xl font-bold text-foreground">
+                    Projects
+                </h1>
                 {projects.length > 0 && (
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-secondary to-secondary/80 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="flex items-center space-x-2 px-5 py-2.5 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
                         <Plus className="h-5 w-5" />
                         <span>Add Project</span>
@@ -296,46 +293,45 @@ export default function ProjectsPage() {
                 )}
             </div>
 
-            {/* Filters */}
+            {/* Search */}
             <div className="bg-card rounded-2xl shadow-lg p-6 border-2 border-border">
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="sm:w-48">
-                        <select
-                            value={sectorFilter}
-                            onChange={(e) => setSectorFilter(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
-                        >
-                            <option value="">All Sectors</option>
-                            <option value="HEALTHCARE">Healthcare</option>
-                            <option value="AGRICULTURE">Agriculture</option>
-                            <option value="URBAN">Urban</option>
-                        </select>
-                    </div>
+                <div className="flex-1 relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search projects..."
+                        className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
+                    />
                 </div>
             </div>
 
             {/* Projects Grid */}
-            {projects.length === 0 ? (
+            {projects.filter(project =>
+                project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                project.description.toLowerCase().includes(searchTerm.toLowerCase())
+            ).length === 0 ? (
                 <div className="bg-card rounded-2xl shadow-xl p-16 text-center border-2 border-dashed border-border">
-                    <div className="mx-auto w-20 h-20 bg-gradient-to-br from-secondary to-secondary/70 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        <Briefcase className="h-10 w-10 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-3">
-                        No Projects Found
-                    </h3>
-                    <p className="text-muted-foreground max-w-sm mx-auto mb-8 leading-relaxed">
-                        You haven&apos;t added any projects yet. Showcase your practical experience.
+                    <p className="text-muted-foreground mb-6 text-lg">
+                        {searchTerm || sectorFilter
+                            ? "No projects found matching your filters"
+                            : "You haven't added any projects yet"}
                     </p>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="px-6 py-3 bg-gradient-to-r from-secondary to-secondary/80 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="inline-flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
-                        Add Your First Project
+                        <Plus className="h-5 w-5" />
+                        <span>Add Your First Project</span>
                     </button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {projects.map((project) => (
+                    {projects.filter(project =>
+                        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        project.description.toLowerCase().includes(searchTerm.toLowerCase())
+                    ).map((project) => (
                         <div
                             key={project.id}
                             className="bg-card rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all border-2 border-border"
@@ -350,12 +346,22 @@ export default function ProjectsPage() {
                                         {project.description}
                                     </p>
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteProject(project.id, project.sector)}
-                                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors ml-2"
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <Link
+                                        href={`/dashboard/projects/edit/${project.id}`}
+                                        className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                        title="Edit project"
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                    </Link>
+                                    <button
+                                        onClick={() => handleDeleteProject(project.id, project.sector)}
+                                        className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                        title="Delete project"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Badges */}
@@ -457,27 +463,27 @@ export default function ProjectsPage() {
 
             {/* Add Project Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-card">
-                            <h2 className="text-xl font-bold">Add Project</h2>
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+                        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between sticky top-0 bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add Project</h2>
                             <button
                                 onClick={() => setShowAddModal(false)}
-                                className="p-2 hover:bg-muted rounded-lg transition-colors"
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                             >
-                                <X className="h-5 w-5" />
+                                <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleAddProject} className="p-6 space-y-4">
+                        <form onSubmit={handleAddProject} className="p-6 space-y-4 bg-white dark:bg-gray-900">
                             {/* Title */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Project Title *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Project Title *</label>
                                 <input
                                     type="text"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
                                     placeholder="e.g., Patient Data Analytics Dashboard"
                                     required
                                 />
@@ -485,11 +491,11 @@ export default function ProjectsPage() {
 
                             {/* Description */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Description *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Description *</label>
                                 <textarea
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background min-h-[100px]"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 min-h-[100px]"
                                     placeholder="Describe your project..."
                                     required
                                 />
@@ -497,11 +503,11 @@ export default function ProjectsPage() {
 
                             {/* Category */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Category *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Category *</label>
                                 <select
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     required
                                 >
                                     <option value="">Select a category</option>
@@ -516,24 +522,24 @@ export default function ProjectsPage() {
                             <div className="grid grid-cols-2 gap-4">
                                 {/* Start Date */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">Start Date *</label>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Start Date *</label>
                                     <input
                                         type="date"
                                         value={formData.startDate}
                                         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                        className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                         required
                                     />
                                 </div>
 
                                 {/* End Date */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">End Date</label>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">End Date</label>
                                     <input
                                         type="date"
                                         value={formData.endDate}
                                         onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                                        className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     />
                                 </div>
                             </div>
@@ -541,11 +547,11 @@ export default function ProjectsPage() {
                             <div className="grid grid-cols-2 gap-4">
                                 {/* Status */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">Status *</label>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Status *</label>
                                     <select
                                         value={formData.status}
                                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                        className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                         required
                                     >
                                         <option value="IN_PROGRESS">In Progress</option>
@@ -556,36 +562,36 @@ export default function ProjectsPage() {
 
                                 {/* Team Size */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">Team Size</label>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Team Size</label>
                                     <input
                                         type="number"
                                         min="1"
                                         value={formData.teamSize}
                                         onChange={(e) => setFormData({ ...formData, teamSize: parseInt(e.target.value) || 1 })}
-                                        className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     />
                                 </div>
                             </div>
 
                             {/* Role */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Your Role</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Your Role</label>
                                 <input
                                     type="text"
                                     value={formData.role}
                                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                                    className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
                                     placeholder="e.g., Lead Developer, Data Analyst"
                                 />
                             </div>
 
                             {/* Outcomes */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Outcomes *</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Outcomes *</label>
                                 <textarea
                                     value={formData.outcomes}
                                     onChange={(e) => setFormData({ ...formData, outcomes: e.target.value })}
-                                    className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
                                     placeholder="What were the results of this project?"
                                     required
                                 />
@@ -593,20 +599,20 @@ export default function ProjectsPage() {
 
                             {/* Technologies */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Technologies Used</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Technologies Used</label>
                                 <div className="flex gap-2 mb-2">
                                     <input
                                         type="text"
                                         value={techInput}
                                         onChange={(e) => setTechInput(e.target.value)}
                                         onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTech())}
-                                        className="flex-1 px-4 py-2 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
                                         placeholder="Add technology"
                                     />
                                     <button
                                         type="button"
                                         onClick={addTech}
-                                        className="px-4 py-2 bg-primary text-primary-foreground rounded-xl font-medium"
+                                        className="px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary/90"
                                     >
                                         Add
                                     </button>
@@ -615,13 +621,13 @@ export default function ProjectsPage() {
                                     {formData.technologies.map((tech, index) => (
                                         <span
                                             key={index}
-                                            className="flex items-center gap-1 px-3 py-1 bg-muted text-muted-foreground rounded-lg text-sm"
+                                            className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg text-sm border border-gray-300 dark:border-gray-700"
                                         >
                                             {tech}
                                             <button
                                                 type="button"
                                                 onClick={() => removeTech(tech)}
-                                                className="hover:text-destructive"
+                                                className="hover:text-red-600 dark:hover:text-red-400"
                                             >
                                                 <X className="h-3 w-3" />
                                             </button>
@@ -632,20 +638,20 @@ export default function ProjectsPage() {
 
                             {/* Skills Used */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Skills Used</label>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Skills Used</label>
                                 <div className="flex gap-2 mb-2">
                                     <input
                                         type="text"
                                         value={skillInput}
                                         onChange={(e) => setSkillInput(e.target.value)}
                                         onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())}
-                                        className="flex-1 px-4 py-2 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
                                         placeholder="Add skill"
                                     />
                                     <button
                                         type="button"
                                         onClick={addSkill}
-                                        className="px-4 py-2 bg-primary text-primary-foreground rounded-xl font-medium"
+                                        className="px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary/90"
                                     >
                                         Add
                                     </button>
@@ -654,13 +660,13 @@ export default function ProjectsPage() {
                                     {formData.skillsUsed.map((skill, index) => (
                                         <span
                                             key={index}
-                                            className="flex items-center gap-1 px-3 py-1 bg-muted text-muted-foreground rounded-lg text-sm"
+                                            className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg text-sm border border-gray-300 dark:border-gray-700"
                                         >
                                             {skill}
                                             <button
                                                 type="button"
                                                 onClick={() => removeSkill(skill)}
-                                                className="hover:text-destructive"
+                                                className="hover:text-red-600 dark:hover:text-red-400"
                                             >
                                                 <X className="h-3 w-3" />
                                             </button>
@@ -672,22 +678,22 @@ export default function ProjectsPage() {
                             {/* URLs */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">Repository URL</label>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Repository URL</label>
                                     <input
                                         type="url"
                                         value={formData.repositoryUrl}
                                         onChange={(e) => setFormData({ ...formData, repositoryUrl: e.target.value })}
-                                        className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
                                         placeholder="https://github.com/..."
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">Live URL</label>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Live URL</label>
                                     <input
                                         type="url"
                                         value={formData.liveUrl}
                                         onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
-                                        className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background"
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
                                         placeholder="https://..."
                                     />
                                 </div>
@@ -700,9 +706,9 @@ export default function ProjectsPage() {
                                     id="isPublic"
                                     checked={formData.isPublic}
                                     onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-                                    className="h-4 w-4"
+                                    className="h-4 w-4 rounded border-gray-300 dark:border-gray-600"
                                 />
-                                <label htmlFor="isPublic" className="text-sm font-medium">
+                                <label htmlFor="isPublic" className="text-sm font-medium text-gray-900 dark:text-gray-200">
                                     Make this project publicly visible
                                 </label>
                             </div>
@@ -712,14 +718,14 @@ export default function ProjectsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="flex-1 px-4 py-3 border-2 border-border rounded-xl font-medium hover:bg-muted transition-colors"
+                                    className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-900 dark:text-white"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="flex-1 px-4 py-3 bg-primary text-primary-foreground rounded-xl font-medium disabled:opacity-50"
+                                    className="flex-1 px-4 py-3 bg-primary text-white rounded-xl font-medium disabled:opacity-50 hover:bg-primary/90"
                                 >
                                     {submitting ? "Adding..." : "Add Project"}
                                 </button>

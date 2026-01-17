@@ -18,6 +18,7 @@ router.delete('/certifications/:id', healthcareController.deleteHealthcareCertif
 
 // Healthcare projects
 router.get('/projects', healthcareController.getHealthcareProjects);
+router.get('/projects/:id', healthcareController.getHealthcareProject);
 router.post('/projects', healthcareController.addHealthcareProject);
 router.put('/projects/:id', healthcareController.updateHealthcareProject);
 router.delete('/projects/:id', healthcareController.deleteHealthcareProject);

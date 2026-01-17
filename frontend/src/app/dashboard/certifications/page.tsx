@@ -1,8 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Award, Briefcase, Target, Sprout, Plus, Calendar, ExternalLink, X, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { Award, Plus, Calendar, ExternalLink, X, Trash2, Search } from "lucide-react";
 
 interface Certification {
     id: string;
@@ -31,6 +30,7 @@ interface AddCertificationForm {
 export default function CertificationsPage() {
     const [certifications, setCertifications] = useState<Certification[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
     const [sectorFilter, setSectorFilter] = useState("");
     const [showAddModal, setShowAddModal] = useState(false);
     const [formSector, setFormSector] = useState("HEALTHCARE");
@@ -180,10 +180,18 @@ export default function CertificationsPage() {
         fetchAgricultureStats();
     }, [fetchAgricultureStats]);
 
+    const filteredCertifications = certifications.filter((cert) =>
+        cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cert.issuingOrg.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-100">
-                <div className="text-muted-foreground">Loading agriculture data...</div>
+            <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground font-medium">Loading certifications...</p>
+                </div>
             </div>
         );
     }
@@ -191,22 +199,14 @@ export default function CertificationsPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-4 bg-linear-to-r from-secondary/10 to-secondary/5 p-6 rounded-2xl border-2 border-border shadow-lg">
-                <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-secondary to-secondary/70 flex items-center justify-center shadow-lg">
-                    <Sprout className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                    <h1 className="text-3xl font-bold text-foreground">Certifications</h1>
-                    <p className="text-muted-foreground font-medium">
-                        {sectorFilter
-                            ? `Viewing ${sectorFilter.toLowerCase()} certifications`
-                            : "All your professional certifications"}
-                    </p>
-                </div>
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold text-foreground">
+                    Certifications
+                </h1>
                 {certifications.length > 0 && (
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="flex items-center space-x-2 px-5 py-2.5 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
                         <Plus className="h-5 w-5" />
                         <span>Add Certification</span>
@@ -214,46 +214,39 @@ export default function CertificationsPage() {
                 )}
             </div>
 
-            {/* Filters */}
+            {/* Search */}
             <div className="bg-card rounded-2xl shadow-lg p-6 border-2 border-border">
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="sm:w-48">
-                        <select
-                            value={sectorFilter}
-                            onChange={(e) => setSectorFilter(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
-                        >
-                            <option value="">All Sectors</option>
-                            <option value="HEALTHCARE">Healthcare</option>
-                            <option value="AGRICULTURE">Agriculture</option>
-                            <option value="URBAN">Urban</option>
-                        </select>
-                    </div>
+                <div className="flex-1 relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search certifications..."
+                        className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
+                    />
                 </div>
             </div>
 
             {/* Certifications Grid */}
-            {certifications.length === 0 ? (
+            {filteredCertifications.length === 0 ? (
                 <div className="bg-card rounded-2xl shadow-xl p-16 text-center border-2 border-dashed border-border">
-                    <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        <Award className="h-10 w-10 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-3">
-                        No Certifications Found
-                    </h3>
-                    <p className="text-muted-foreground max-w-sm mx-auto mb-8 leading-relaxed">
-                        You haven&apos;t added any certifications yet. Start tracking your professional credentials.
+                    <p className="text-muted-foreground mb-6 text-lg">
+                        {searchTerm || sectorFilter
+                            ? "No certifications found matching your filters"
+                            : "You haven't added any certifications yet"}
                     </p>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="w-full py-4 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="inline-flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
-                        Add Your First Certification
+                        <Plus className="h-5 w-5" />
+                        <span>Add Your First Certification</span>
                     </button>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {certifications.map((cert) => (
+                    {filteredCertifications.map((cert) => (
                         <div
                             key={cert.id}
                             className="bg-card rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:-translate-y-1 border-2 border-border"
@@ -352,118 +345,40 @@ export default function CertificationsPage() {
                 </div>
             )}
 
-            {/* Quick Actions */}
-            <div className="grid md:grid-cols-3 gap-6">
-                <Link
-                    href="/dashboard/skills?sector=AGRICULTURE"
-                    className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-2xl hover:border-secondary/50 transition-all transform hover:-translate-y-1 group"
-                >
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-linear-to-br from-secondary to-secondary/70 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Target className="h-6 w-6 text-white" />
-                        </div>
-                        <h3 className="font-bold text-lg text-foreground">Skills Tracker</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                        Manage your agritech skills and proficiency levels
-                    </p>
-                </Link>
-
-                <Link
-                    href="/dashboard/certifications?sector=AGRICULTURE"
-                    className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-2xl hover:border-primary/50 transition-all transform hover:-translate-y-1 group"
-                >
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-linear-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Award className="h-6 w-6 text-white" />
-                        </div>
-                        <h3 className="font-bold text-lg text-foreground">Certifications</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                        Track precision farming and sustainability certs
-                    </p>
-                </Link>
-
-                <Link
-                    href="/dashboard/projects?sector=AGRICULTURE"
-                    className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-2xl hover:border-accent/50 transition-all transform hover:-translate-y-1 group"
-                >
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-linear-to-br from-accent to-accent/70 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Briefcase className="h-6 w-6 text-white" />
-                        </div>
-                        <h3 className="font-bold text-lg text-foreground">Projects</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                        Showcase your agricultural technology projects
-                    </p>
-                </Link>
-            </div>
-
-            {/* Career Pathways */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-                <h2 className="text-xl font-semibold mb-4">Recommended Career Pathways</h2>
-                <div className="space-y-3">
-                    <div className="p-4 rounded-lg bg-muted/50">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold">Precision Agriculture Specialist</h3>
-                            <span className="text-sm font-medium text-agriculture">82% Match</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Implement technology-driven farming solutions
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>💰 $55,000 - $85,000</span>
-                            <span>•</span>
-                            <span>📈 High Demand</span>
+            {/* Certifications Overview */}
+            <div className="bg-card rounded-2xl shadow-lg p-6 border-2 border-border">
+                <h2 className="text-xl font-bold text-foreground mb-6">Certifications Overview</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-6 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl border-2 border-primary/20">
+                        <div className="text-center">
+                            <div className="text-4xl font-bold text-foreground mb-2">
+                                {certifications.length}
+                            </div>
+                            <div className="text-sm font-medium text-muted-foreground">
+                                Total Certifications
+                            </div>
                         </div>
                     </div>
-
-                    <div className="p-4 rounded-lg bg-muted/50">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold">Sustainable Farming Consultant</h3>
-                            <span className="text-sm font-medium text-agriculture">75% Match</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Advise on sustainable agricultural practices
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>💰 $60,000 - $90,000</span>
-                            <span>•</span>
-                            <span>📈 Very High Demand</span>
+                    <div className="p-6 bg-gradient-to-br from-green-500/5 to-green-500/10 rounded-xl border-2 border-green-500/20">
+                        <div className="text-center">
+                            <div className="text-4xl font-bold text-foreground mb-2">
+                                {certifications.filter(cert => cert.neverExpires || !isExpired(cert.expiryDate)).length}
+                            </div>
+                            <div className="text-sm font-medium text-muted-foreground">
+                                Active
+                            </div>
                         </div>
                     </div>
-                </div>
-                <Link
-                    href="/dashboard/agriculture/career-pathways"
-                    className="mt-4 inline-block text-sm text-agriculture hover:underline"
-                >
-                    View all career pathways →
-                </Link>
-            </div>
-
-            {/* Innovation Readiness */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-                <h2 className="text-xl font-semibold mb-4">Innovation Readiness Assessment</h2>
-                <div className="space-y-4">
-                    <div>
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium">Overall Innovation Readiness</span>
-                            <span className="text-sm font-medium">0%</span>
-                        </div>
-                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-agriculture transition-all"
-                                style={{ width: '0%' }}
-                            />
+                    <div className="p-6 bg-gradient-to-br from-red-500/5 to-red-500/10 rounded-xl border-2 border-red-500/20">
+                        <div className="text-center">
+                            <div className="text-4xl font-bold text-foreground mb-2">
+                                {certifications.filter(cert => !cert.neverExpires && isExpired(cert.expiryDate)).length}
+                            </div>
+                            <div className="text-sm font-medium text-muted-foreground">
+                                Expired
+                            </div>
                         </div>
                     </div>
-                    <Link
-                        href="/dashboard/agriculture/assessment"
-                        className="inline-block text-sm text-agriculture hover:underline"
-                    >
-                        Take assessment →
-                    </Link>
                 </div>
             </div>
 

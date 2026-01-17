@@ -106,6 +106,46 @@ export const getUrbanProjects = async (req: Request, res: Response) => {
     }
 };
 
+// Get single urban project by ID
+export const getUrbanProject = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user?.userId;
+        const { id } = req.params;
+
+        const project = await prisma.project.findFirst({
+            where: {
+                id,
+                userId,
+                sector: 'URBAN',
+            },
+        });
+
+        if (!project) {
+            return res.status(404).json({
+                success: false,
+                message: 'Project not found',
+            });
+        }
+
+        return res.json({
+            success: true,
+            data: {
+                ...project,
+                skillsUsed: project.skillsUsed ? JSON.parse(project.skillsUsed) : [],
+                technologies: project.technologies ? JSON.parse(project.technologies) : [],
+                metrics: project.metrics ? JSON.parse(project.metrics) : null,
+                attachments: project.attachments ? JSON.parse(project.attachments) : null
+            },
+        });
+    } catch (error) {
+        console.error('Error fetching urban project:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to fetch urban project',
+        });
+    }
+};
+
 // Urban transformation readiness assessment
 export const getUrbanAssessment = async (req: Request, res: Response) => {
     try {

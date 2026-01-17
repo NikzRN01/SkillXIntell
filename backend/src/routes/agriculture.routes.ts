@@ -18,6 +18,7 @@ router.delete('/certifications/:id', agricultureController.deleteAgricultureCert
 
 // Agriculture projects
 router.get('/projects', agricultureController.getAgricultureProjects);
+router.get('/projects/:id', agricultureController.getAgricultureProject);
 router.post('/projects', agricultureController.addAgricultureProject);
 router.put('/projects/:id', agricultureController.updateAgricultureProject);
 router.delete('/projects/:id', agricultureController.deleteAgricultureProject);
