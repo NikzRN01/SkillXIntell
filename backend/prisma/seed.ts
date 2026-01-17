@@ -1,24 +1,92 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
     console.log('🌱 Starting database seed...');
 
-    // Note: Since we're using JWT authentication instead of Supabase Auth,
-    // we don't need to seed users here. Users will be created through registration.
+    // Create test users with universal credentials
+    const testUsers = [
+        {
+            email: 'test@skillxintell.com',
+            password: 'Test@123',
+            name: 'Test User',
+            role: 'STUDENT',
+        },
+        {
+            email: 'student@skillxintell.com',
+            password: 'Student@123',
+            name: 'Student Demo',
+            role: 'STUDENT',
+        },
+        {
+            email: 'educator@skillxintell.com',
+            password: 'Educator@123',
+            name: 'Educator Demo',
+            role: 'EDUCATOR',
+        },
+        {
+            email: 'employer@skillxintell.com',
+            password: 'Employer@123',
+            name: 'Employer Demo',
+            role: 'EMPLOYER',
+        },
+    ];
 
-    console.log('✅ Seed data created successfully!');
-    console.log('\n📊 Summary:');
-    console.log('- Database schema is ready');
-    console.log('- Users can register through the app');
-    console.log('- Skills can be added through the dashboard');
+    for (const userData of testUsers) {
+        const existingUser = await prisma.user.findUnique({
+            where: { email: userData.email },
+        });
+
+        if (!existingUser) {
+            const passwordHash = await bcrypt.hash(userData.password, 10);
+            
+            const user = await prisma.user.create({
+                data: {
+                    email: userData.email,
+                    name: userData.name,
+                    passwordHash,
+                    role: userData.role,
+                    isActive: true,
+                    profile: {
+                        create: {
+                            bio: `This is a demo ${userData.role.toLowerCase()} account for testing SkillXIntell.`,
+                        },
+                    },
+                },
+            });
+
+            console.log(`✅ Created user: ${user.email}`);
+        } else {
+            console.log(`ℹ️  User already exists: ${userData.email}`);
+        }
+    }
+
+    console.log('\n✅ Seed data created successfully!');
+    console.log('\n📊 Test Credentials:');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('👤 General Test Account:');
+    console.log('   Email: test@skillxintell.com');
+    console.log('   Password: Test@123');
+    console.log('');
+    console.log('🎓 Student Account:');
+    console.log('   Email: student@skillxintell.com');
+    console.log('   Password: Student@123');
+    console.log('');
+    console.log('👨‍🏫 Educator Account:');
+    console.log('   Email: educator@skillxintell.com');
+    console.log('   Password: Educator@123');
+    console.log('');
+    console.log('💼 Employer Account:');
+    console.log('   Email: employer@skillxintell.com');
+    console.log('   Password: Employer@123');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     console.log('\n💡 Next steps:');
     console.log('1. Start the backend server: npm run dev');
     console.log('2. Start the frontend: cd ../frontend && npm run dev');
-    console.log('3. Register a new user at http://localhost:3000/register');
-    console.log('4. Add skills through the dashboard');
+    console.log('3. Login with any test account above');
 }
 
 main()
