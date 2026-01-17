@@ -225,78 +225,27 @@ export default function HealthcareDashboard() {
                 </Link>
             </div>
 
-            {/* Career Pathways Section */}
+            {/* Recommended Courses Section */}
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold">Recommended Career Pathways</h2>
-                    <Link
-                        href="/dashboard/healthcare/career-pathways"
-                        className="text-sm text-primary hover:underline"
-                    >
-                        View all →
-                    </Link>
+                    <h2 className="text-2xl font-bold">Recommended Courses</h2>
                 </div>
 
-                {pathways.length > 0 ? (
-                    <div className="space-y-6">
-                        {pathways.map((pathway, index) => (
-                            <div key={index} className="p-6 rounded-xl border border-border bg-card space-y-4">
-                                {/* Pathway Header */}
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <h3 className="text-xl font-bold">{pathway.role}</h3>
-                                            <span className="px-3 py-1 bg-primary/10 text-primary text-sm font-semibold rounded-full">
-                                                {pathway.matchScore}% Match
-                                            </span>
-                                        </div>
-                                        <p className="text-muted-foreground mb-3">{pathway.description}</p>
-                                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                            <span className="flex items-center gap-1">
-                                                💰 {pathway.salaryRange}
-                                            </span>
-                                            <span>•</span>
-                                            <span className="flex items-center gap-1">
-                                                📈 {pathway.demand}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Required Skills */}
-                                {pathway.skills && pathway.skills.length > 0 && (
-                                    <div>
-                                        <h4 className="text-sm font-semibold mb-2">Required Skills:</h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {pathway.skills.map((skill, idx) => (
-                                                <span
-                                                    key={idx}
-                                                    className="px-3 py-1 bg-muted text-sm rounded-full"
-                                                >
-                                                    {skill}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Recommended Courses */}
-                                {pathway.courses && pathway.courses.length > 0 && (
-                                    <div>
-                                        <h4 className="text-sm font-semibold mb-3">Recommended Courses:</h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            {pathway.courses.slice(0, 3).map((course) => (
-                                                <CourseCard key={course.id} course={course} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                {pathways.length > 0 && pathways.some(p => p.courses && p.courses.length > 0) ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {(() => {
+                            const allCourses = pathways.flatMap(pathway => pathway.courses || []);
+                            const uniqueCourses = allCourses.filter((course, index, self) => 
+                                index === self.findIndex((c) => c.id === course.id)
+                            );
+                            return uniqueCourses.slice(0, 9).map((course) => (
+                                <CourseCard key={course.id} course={course} />
+                            ));
+                        })()}
                     </div>
                 ) : (
                     <div className="p-8 rounded-xl border border-border bg-card text-center">
-                        <p className="text-muted-foreground">No career pathways available. Add more skills to get personalized recommendations.</p>
+                        <p className="text-muted-foreground">No courses available. Add more skills to get personalized recommendations.</p>
                     </div>
                 )}
             </div>
