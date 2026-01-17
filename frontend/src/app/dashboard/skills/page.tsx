@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Trash2, Pencil } from "lucide-react";
+import { Plus, Search, Trash2, Pencil, X } from "lucide-react";
 
 interface Skill {
     id: string;
@@ -15,6 +15,14 @@ interface Skill {
     description?: string;
 }
 
+interface SkillForm {
+    name: string;
+    category: string;
+    proficiencyLevel: number;
+    tags: string[];
+    description: string;
+}
+
 import { useSearchParams } from "next/navigation";
 
 export default function SkillsPage() {
@@ -23,6 +31,17 @@ export default function SkillsPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [sectorFilter, setSectorFilter] = useState(searchParams.get("sector") || "");
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+    const [formData, setFormData] = useState<SkillForm>({
+        name: "",
+        category: "",
+        proficiencyLevel: 1,
+        tags: [],
+        description: "",
+    });
+    const [tagInput, setTagInput] = useState("");
 
     const fetchSkills = useCallback(async () => {
         try {
@@ -80,6 +99,70 @@ export default function SkillsPage() {
         }
     };
 
+    const handleEditSkill = (skill: Skill) => {
+        setEditingSkill(skill);
+        setFormData({
+            name: skill.name,
+            category: skill.category,
+            proficiencyLevel: skill.proficiencyLevel,
+            tags: skill.tags || [],
+            description: skill.description || "",
+        });
+        setShowEditModal(true);
+    };
+
+    const handleUpdateSkill = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingSkill) return;
+
+        setSubmitting(true);
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/skills/${editingSkill.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
+
+            if (response.ok) {
+                setShowEditModal(false);
+                setEditingSkill(null);
+                setFormData({
+                    name: "",
+                    category: "",
+                    proficiencyLevel: 1,
+                    tags: [],
+                    description: "",
+                });
+                fetchSkills();
+            }
+        } catch (error) {
+            console.error("Failed to update skill:", error);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const addTag = () => {
+        if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+            setFormData({ ...formData, tags: [...formData.tags, tagInput.trim()] });
+            setTagInput("");
+        }
+    };
+
+    const removeTag = (tagToRemove: string) => {
+        setFormData({
+            ...formData,
+            tags: formData.tags.filter((t) => t !== tagToRemove),
+        });
+    };
+
     const filteredSkills = skills.filter((skill) =>
         skill.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -122,7 +205,7 @@ export default function SkillsPage() {
                 {skills.length > 0 && (
                     <Link
                         href="/dashboard/skills/add"
-                        className="flex items-center space-x-2 px-5 py-2.5 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
                         <Plus className="h-5 w-5" />
                         <span>Add Skill</span>
@@ -144,6 +227,17 @@ export default function SkillsPage() {
                             className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
                         />
                     </div>
+                    {/* Sector Filter */}
+                    <select
+                        value={sectorFilter}
+                        onChange={(e) => setSectorFilter(e.target.value)}
+                        className="px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium min-w-[180px]"
+                    >
+                        <option value="">All Sectors</option>
+                        <option value="HEALTHCARE">Healthcare</option>
+                        <option value="AGRICULTURE">Agriculture</option>
+                        <option value="URBAN">Urban</option>
+                    </select>
                 </div>
             </div>
 
@@ -153,11 +247,11 @@ export default function SkillsPage() {
                     <p className="text-muted-foreground mb-6 text-lg">
                         {searchTerm || sectorFilter
                             ? "No skills found matching your filters"
-                            : "You haven&apos;t added any skills yet"}
+                            : "You haven't added any skills yet"}
                     </p>
                     <Link
                         href="/dashboard/skills/add"
-                        className="inline-flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
                         <Plus className="h-5 w-5" />
                         <span>Add Your First Skill</span>
@@ -181,13 +275,13 @@ export default function SkillsPage() {
                                             Verified
                                         </span>
                                     )}
-                                    <Link
-                                        href={`/dashboard/skills/edit/${skill.id}`}
+                                    <button
+                                        onClick={() => handleEditSkill(skill)}
                                         className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                         title="Edit skill"
                                     >
                                         <Pencil className="h-4 w-4" />
-                                    </Link>
+                                    </button>
                                     <button
                                         onClick={() => handleDeleteSkill(skill.id)}
                                         className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
@@ -292,6 +386,148 @@ export default function SkillsPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Skill Modal */}
+            {showEditModal && editingSkill && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+                        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-primary/10 to-accent/10">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Edit Skill</h2>
+                            <button
+                                onClick={() => {
+                                    setShowEditModal(false);
+                                    setEditingSkill(null);
+                                }}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                            >
+                                <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleUpdateSkill} className="p-6 space-y-4 bg-white dark:bg-gray-900">
+                            {/* Skill Name */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Skill Name *</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    placeholder="e.g., Python Programming"
+                                />
+                            </div>
+
+                            {/* Category */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Category *</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    placeholder="e.g., Programming Languages"
+                                />
+                            </div>
+
+                            {/* Proficiency Level */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">
+                                    Proficiency Level: {getProficiencyLabel(formData.proficiencyLevel)}
+                                </label>
+                                <input
+                                    type="range"
+                                    min="1"
+                                    max="5"
+                                    value={formData.proficiencyLevel}
+                                    onChange={(e) => setFormData({ ...formData, proficiencyLevel: parseInt(e.target.value) })}
+                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                                />
+                                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <span>Beginner</span>
+                                    <span>Intermediate</span>
+                                    <span>Advanced</span>
+                                    <span>Expert</span>
+                                    <span>Master</span>
+                                </div>
+                            </div>
+
+                            {/* Description */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Description</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
+                                    placeholder="Describe your experience with this skill..."
+                                    rows={3}
+                                />
+                            </div>
+
+                            {/* Tags */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Tags</label>
+                                <div className="flex gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        value={tagInput}
+                                        onChange={(e) => setTagInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                                        className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
+                                        placeholder="Add a tag"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={addTag}
+                                        className="px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary/90"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {formData.tags.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg text-sm border border-gray-300 dark:border-gray-700"
+                                        >
+                                            {tag}
+                                            <button
+                                                type="button"
+                                                onClick={() => removeTag(tag)}
+                                                className="hover:text-red-600 dark:hover:text-red-400"
+                                            >
+                                                <X className="h-3 w-3" />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Submit */}
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowEditModal(false);
+                                        setEditingSkill(null);
+                                    }}
+                                    className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-900 dark:text-white"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="flex-1 px-4 py-3 bg-primary text-white rounded-xl font-medium disabled:opacity-50 hover:bg-primary/90"
+                                >
+                                    {submitting ? "Updating..." : "Update Skill"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

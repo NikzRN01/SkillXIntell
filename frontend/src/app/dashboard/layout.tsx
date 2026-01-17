@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Brain, User, Award, LayoutDashboard, LogOut } from "lucide-react";
+import { Brain, User, Award, LayoutDashboard, LogOut, Briefcase, Target } from "lucide-react";
 import { clearAuthStorage, useStoredToken, useStoredUser } from "@/lib/auth";
 
 export default function DashboardLayout({
@@ -12,6 +12,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const router = useRouter();
+    const pathname = usePathname();
     const user = useStoredUser();
     const token = useStoredToken();
 
@@ -81,24 +82,58 @@ export default function DashboardLayout({
                             <nav className="space-y-1">
                                 <Link
                                     href="/dashboard"
-                                    className="flex items-center gap-3 px-4 py-3 text-slate-900 bg-blue-50 border-l-4 border-l-blue-600 rounded-xl transition-all font-semibold"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
+                                        pathname === "/dashboard"
+                                            ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
+                                            : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
+                                    }`}
                                 >
-                                    <LayoutDashboard className="h-5 w-5 text-blue-600" />
+                                    <LayoutDashboard className={`h-5 w-5 ${pathname === "/dashboard" ? "text-blue-600" : "text-slate-600"}`} />
                                     <span>Dashboard</span>
                                 </Link>
                                 <Link
-                                    href="/dashboard/profile"
-                                    className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-xl transition-all font-medium"
+                                    href="/dashboard/skills"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
+                                        pathname === "/dashboard/skills"
+                                            ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
+                                            : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
+                                    }`}
                                 >
-                                    <User className="h-5 w-5 text-slate-600" />
-                                    <span>Profile</span>
+                                    <Award className={`h-5 w-5 ${pathname === "/dashboard/skills" ? "text-blue-600" : "text-slate-600"}`} />
+                                    <span>Skills</span>
                                 </Link>
                                 <Link
-                                    href="/dashboard/skills"
-                                    className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-xl transition-all font-medium"
+                                    href="/dashboard/certifications"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
+                                        pathname === "/dashboard/certifications"
+                                            ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
+                                            : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
+                                    }`}
                                 >
-                                    <Award className="h-5 w-5 text-slate-600" />
-                                    <span>Skills</span>
+                                    <Briefcase className={`h-5 w-5 ${pathname === "/dashboard/certifications" ? "text-blue-600" : "text-slate-600"}`} />
+                                    <span>Certifications</span>
+                                </Link>
+                                <Link
+                                    href="/dashboard/projects"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
+                                        pathname === "/dashboard/projects"
+                                            ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
+                                            : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
+                                    }`}
+                                >
+                                    <Target className={`h-5 w-5 ${pathname === "/dashboard/projects" ? "text-blue-600" : "text-slate-600"}`} />
+                                    <span>Projects</span>
+                                </Link>
+                                <Link
+                                    href="/dashboard/profile"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
+                                        pathname === "/dashboard/profile" || pathname.startsWith("/dashboard/profile/")
+                                            ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
+                                            : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
+                                    }`}
+                                >
+                                    <User className={`h-5 w-5 ${pathname === "/dashboard/profile" || pathname.startsWith("/dashboard/profile/") ? "text-blue-600" : "text-slate-600"}`} />
+                                    <span>Profile</span>
                                 </Link>
                             </nav>
                         </div>

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Briefcase, Plus, Calendar, Trash2, Github, Globe, X, Users, Search, Pencil } from "lucide-react";
-import Link from "next/link";
 
 interface Project {
     id: string;
@@ -50,6 +49,8 @@ export default function ProjectsPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [sectorFilter, setSectorFilter] = useState(searchParams.get("sector") || "");
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingProject, setEditingProject] = useState<Project | null>(null);
     const [formSector, setFormSector] = useState(searchParams.get("sector") || "HEALTHCARE");
     const [submitting, setSubmitting] = useState(false);
     const [formData, setFormData] = useState<AddProjectForm>({
@@ -204,6 +205,77 @@ export default function ProjectsPage() {
         }
     };
 
+    const handleEditProject = (project: Project) => {
+        setEditingProject(project);
+        setFormSector(project.sector);
+        setFormData({
+            title: project.title,
+            description: project.description,
+            category: project.category,
+            skillsUsed: project.skillsUsed,
+            technologies: project.technologies,
+            outcomes: project.outcomes,
+            impact: project.impact || "",
+            startDate: project.startDate.split('T')[0],
+            endDate: project.endDate ? project.endDate.split('T')[0] : "",
+            status: project.status,
+            teamSize: project.teamSize || 1,
+            role: project.role || "",
+            repositoryUrl: project.repositoryUrl || "",
+            liveUrl: project.liveUrl || "",
+            isPublic: project.isPublic,
+        });
+        setShowEditModal(true);
+    };
+
+    const handleUpdateProject = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingProject) return;
+
+        setSubmitting(true);
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/${editingProject.sector.toLowerCase()}/projects/${editingProject.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
+
+            if (response.ok) {
+                setShowEditModal(false);
+                setEditingProject(null);
+                setFormData({
+                    title: "",
+                    description: "",
+                    category: "",
+                    skillsUsed: [],
+                    technologies: [],
+                    outcomes: "",
+                    impact: "",
+                    startDate: "",
+                    endDate: "",
+                    status: "IN_PROGRESS",
+                    teamSize: 1,
+                    role: "",
+                    repositoryUrl: "",
+                    liveUrl: "",
+                    isPublic: true,
+                });
+                fetchProjects();
+            }
+        } catch (error) {
+            console.error("Failed to update project:", error);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     const addSkill = () => {
         if (skillInput.trim() && !formData.skillsUsed.includes(skillInput.trim())) {
             setFormData({
@@ -285,7 +357,7 @@ export default function ProjectsPage() {
                 {projects.length > 0 && (
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="flex items-center space-x-2 px-5 py-2.5 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
                         <Plus className="h-5 w-5" />
                         <span>Add Project</span>
@@ -293,17 +365,30 @@ export default function ProjectsPage() {
                 )}
             </div>
 
-            {/* Search */}
+            {/* Search & Filter */}
             <div className="bg-card rounded-2xl shadow-lg p-6 border-2 border-border">
-                <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search projects..."
-                        className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
-                    />
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1 relative">
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Search projects..."
+                            className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
+                        />
+                    </div>
+                    {/* Sector Filter */}
+                    <select
+                        value={sectorFilter}
+                        onChange={(e) => setSectorFilter(e.target.value)}
+                        className="px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium min-w-[180px]"
+                    >
+                        <option value="">All Sectors</option>
+                        <option value="HEALTHCARE">Healthcare</option>
+                        <option value="AGRICULTURE">Agriculture</option>
+                        <option value="URBAN">Urban</option>
+                    </select>
                 </div>
             </div>
 
@@ -320,7 +405,7 @@ export default function ProjectsPage() {
                     </p>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="inline-flex items-center space-x-2 px-6 py-3 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+                        className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
                         <Plus className="h-5 w-5" />
                         <span>Add Your First Project</span>
@@ -347,13 +432,13 @@ export default function ProjectsPage() {
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Link
-                                        href={`/dashboard/projects/edit/${project.id}`}
+                                    <button
+                                        onClick={() => handleEditProject(project)}
                                         className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                         title="Edit project"
                                     >
                                         <Pencil className="h-4 w-4" />
-                                    </Link>
+                                    </button>
                                     <button
                                         onClick={() => handleDeleteProject(project.id, project.sector)}
                                         className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
@@ -728,6 +813,251 @@ export default function ProjectsPage() {
                                     className="flex-1 px-4 py-3 bg-primary text-white rounded-xl font-medium disabled:opacity-50 hover:bg-primary/90"
                                 >
                                     {submitting ? "Adding..." : "Add Project"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Project Modal - Same structure as Add but with handleUpdateProject */}
+            {showEditModal && editingProject && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+                        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between sticky top-0 bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Edit Project</h2>
+                            <button
+                                onClick={() => {
+                                    setShowEditModal(false);
+                                    setEditingProject(null);
+                                }}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                            >
+                                <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleUpdateProject} className="p-6 space-y-4 bg-white dark:bg-gray-900">
+                            {/* All form fields same as Add modal */}
+                            {/* Title */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Project Title *</label>
+                                <input
+                                    type="text"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
+                                    required
+                                />
+                            </div>
+
+                            {/* Description */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Description *</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 min-h-[100px]"
+                                    required
+                                />
+                            </div>
+
+                            {/* Category */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Category *</label>
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    required
+                                >
+                                    <option value="">Select a category</option>
+                                    {categories[editingProject.sector as keyof typeof categories]?.map((cat) => (
+                                        <option key={cat} value={cat}>
+                                            {cat.replace(/_/g, " ")}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Start Date *</label>
+                                    <input
+                                        type="date"
+                                        value={formData.startDate}
+                                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">End Date</label>
+                                    <input
+                                        type="date"
+                                        value={formData.endDate}
+                                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Status *</label>
+                                    <select
+                                        value={formData.status}
+                                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                        required
+                                    >
+                                        <option value="IN_PROGRESS">In Progress</option>
+                                        <option value="COMPLETED">Completed</option>
+                                        <option value="ON_HOLD">On Hold</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Team Size</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={formData.teamSize}
+                                        onChange={(e) => setFormData({ ...formData, teamSize: parseInt(e.target.value) || 1 })}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Your Role</label>
+                                <input
+                                    type="text"
+                                    value={formData.role}
+                                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Outcomes *</label>
+                                <textarea
+                                    value={formData.outcomes}
+                                    onChange={(e) => setFormData({ ...formData, outcomes: e.target.value })}
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500"
+                                    required
+                                />
+                            </div>
+
+                            {/* Technologies */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Technologies Used</label>
+                                <div className="flex gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        value={techInput}
+                                        onChange={(e) => setTechInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTech())}
+                                        className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                        placeholder="Add technology"
+                                    />
+                                    <button type="button" onClick={addTech} className="px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary/90">
+                                        Add
+                                    </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {formData.technologies.map((tech, index) => (
+                                        <span key={index} className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg text-sm">
+                                            {tech}
+                                            <button type="button" onClick={() => removeTech(tech)} className="hover:text-red-600">
+                                                <X className="h-3 w-3" />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Skills */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Skills Used</label>
+                                <div className="flex gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        value={skillInput}
+                                        onChange={(e) => setSkillInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())}
+                                        className="flex-1 px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                        placeholder="Add skill"
+                                    />
+                                    <button type="button" onClick={addSkill} className="px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary/90">
+                                        Add
+                                    </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {formData.skillsUsed.map((skill, index) => (
+                                        <span key={index} className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg text-sm">
+                                            {skill}
+                                            <button type="button" onClick={() => removeSkill(skill)} className="hover:text-red-600">
+                                                <X className="h-3 w-3" />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* URLs */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Repository URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.repositoryUrl}
+                                        onChange={(e) => setFormData({ ...formData, repositoryUrl: e.target.value })}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Live URL</label>
+                                    <input
+                                        type="url"
+                                        value={formData.liveUrl}
+                                        onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
+                                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Public */}
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="edit-isPublic"
+                                    checked={formData.isPublic}
+                                    onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                                    className="h-4 w-4 rounded"
+                                />
+                                <label htmlFor="edit-isPublic" className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    Make this project publicly visible
+                                </label>
+                            </div>
+
+                            {/* Submit */}
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowEditModal(false);
+                                        setEditingProject(null);
+                                    }}
+                                    className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-900 dark:text-white"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="flex-1 px-4 py-3 bg-primary text-white rounded-xl font-medium disabled:opacity-50 hover:bg-primary/90"
+                                >
+                                    {submitting ? "Updating..." : "Update Project"}
                                 </button>
                             </div>
                         </form>
