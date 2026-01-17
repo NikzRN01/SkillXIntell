@@ -1,34 +1,13 @@
 import Link from "next/link";
-import { Activity, Brain, TrendingUp, Target } from "lucide-react";
+import { Activity, TrendingUp, Target } from "lucide-react";
+import SiteNavbar from "@/components/layout/site-navbar";
+import SiteFooter from "@/components/layout/site-footer";
+import Button from "@/components/ui/button";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">SkillXIntell</h1>
-          </div>
-          <nav className="hidden md:flex gap-6 items-center">
-            <Link href="#features" className="text-foreground/70 hover:text-primary transition-colors font-medium">
-              Features
-            </Link>
-            <Link href="#sectors" className="text-foreground/70 hover:text-primary transition-colors font-medium">
-              Sectors
-            </Link>
-            <Link href="/login" className="text-foreground/70 hover:text-primary transition-colors font-medium">
-              Login
-            </Link>
-            <Link href="/register" className="px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-all shadow-md hover:shadow-lg">
-              Get Started
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteNavbar />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
@@ -47,14 +26,10 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center pt-4">
             <Link href="/register">
-              <button className="px-8 py-4 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-                Get Started Free
-              </button>
+              <Button size="lg">Get Started Free</Button>
             </Link>
             <Link href="/login">
-              <button className="px-8 py-4 border-2 border-border rounded-xl font-semibold hover:bg-muted transition-all transform hover:-translate-y-0.5">
-                Login
-              </button>
+              <Button variant="outline" size="lg">Login</Button>
             </Link>
           </div>
         </div>
@@ -129,11 +104,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t mt-20 bg-card">
-        <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-          <p>© 2026 SkillXIntell. Built for better education and career outcomes.</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

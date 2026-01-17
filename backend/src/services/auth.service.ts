@@ -42,9 +42,9 @@ export async function comparePassword(password: string, hash: string): Promise<b
  * Generate a JWT token for a user
  */
 export function generateToken(payload: TokenPayload): string {
-    return jwt.sign(payload, config.jwt.secret, {
+    return jwt.sign(payload, config.jwt.secret as string, {
         expiresIn: config.jwt.expiresIn,
-    });
+    } as any);
 }
 
 /**
@@ -52,7 +52,7 @@ export function generateToken(payload: TokenPayload): string {
  */
 export function verifyToken(token: string): TokenPayload {
     try {
-        return jwt.verify(token, config.jwt.secret) as TokenPayload;
+        return jwt.verify(token, config.jwt.secret as string) as TokenPayload;
     } catch (error) {
         throw new Error('Invalid or expired token');
     }

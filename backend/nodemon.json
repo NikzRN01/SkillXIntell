@@ -3,7 +3,7 @@
         "src"
     ],
     "ext": "ts",
-    "exec": "tsx src/server.ts",
+    "exec": "ts-node src/server.ts",
     "env": {
         "NODE_ENV": "development"
     }

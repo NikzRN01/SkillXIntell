@@ -48,15 +48,17 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="space-y-2 text-center md:text-left">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome back</h1>
-                <p className="text-sm text-slate-700 font-semibold">
+        <div className="space-y-7">
+            <div className="space-y-3 text-center">
+                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                    Welcome back
+                </h1>
+                <p className="text-sm text-slate-600 font-medium">
                     Enter your credentials to access your account
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
                 {error && (
                     <div className="p-4 text-sm text-red-700 bg-red-50 rounded-xl flex items-center gap-2 border-2 border-red-300 shadow-md">
                         <AlertCircle className="h-5 w-5" />
@@ -69,7 +71,7 @@ export default function LoginPage() {
                         Email
                     </label>
                     <input
-                        className="flex h-11 w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 focus-visible:border-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                        className="flex h-12 w-full rounded-xl border-2 border-slate-200 bg-slate-50/50 px-4 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-purple-500 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all"
                         id="email"
                         placeholder="name@example.com"
                         type="email"
@@ -89,13 +91,13 @@ export default function LoginPage() {
                         </label>
                         <Link
                             href="/forgot-password"
-                            className="text-sm font-semibold text-slate-700 hover:text-slate-900 hover:underline"
+                            className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all"
                         >
                             Forgot password?
                         </Link>
                     </div>
                     <input
-                        className="flex h-11 w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 focus-visible:border-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                        className="flex h-12 w-full rounded-xl border-2 border-slate-200 bg-slate-50/50 px-4 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-purple-500 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 transition-all"
                         id="password"
                         type="password"
                         autoComplete="current-password"
@@ -107,7 +109,7 @@ export default function LoginPage() {
                 </div>
 
                 <button
-                    className="inline-flex items-center justify-center rounded-xl text-sm font-bold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-700 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-700 hover:bg-slate-800 text-white h-12 w-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="inline-flex items-center justify-center rounded-xl text-sm font-bold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white h-12 w-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     type="submit"
                     disabled={isLoading}
                 >
@@ -116,10 +118,10 @@ export default function LoginPage() {
                 </button>
             </form>
 
-            <div className="text-center text-sm text-slate-700">
+            <div className="text-center text-sm text-slate-600">
                 Don&apos;t have an account?{" "}
-                <Link href="/register" className="underline underline-offset-4 text-slate-900 hover:text-slate-700 font-bold transition-colors">
-                    Sign up
+                <Link href="/register" className="font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all">
+                    Sign up →
                 </Link>
             </div>
         </div>

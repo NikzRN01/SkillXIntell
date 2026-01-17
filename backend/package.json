@@ -4,11 +4,10 @@
     "description": "SkillXIntell Backend API",
     "main": "dist/server.js",
     "scripts": {
-        "dev": "tsx watch src/server.ts",
-        "dev:nodemon": "nodemon",
+        "dev": "nodemon",
         "build": "tsc -p tsconfig.json",
         "start": "node dist/server.js",
-        "seed": "ts-node src/scripts/seed.ts"
+        "seed": "ts-node prisma/seed.ts"
     },
     "keywords": [
         "skillxintell",
