@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { BarChart3, TrendingUp, Target, Award, Brain, RefreshCw, Activity, Sprout, Building2, Newspaper, Briefcase, Sparkles } from "lucide-react";
+import { BarChart3, TrendingUp, Target, Award, Brain, RefreshCw, Activity, Sprout, Building2, Newspaper, Briefcase, Sparkles, MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 interface SectorAnalytics {
     overallScore: number;
@@ -450,10 +451,22 @@ export default function AnalyticsDashboard() {
             </div>
 
             {/* AI-Powered Recommendations by Sector */}
-            <div className="space-y-6">
+            <div className="p-6 md:p-8 rounded-2xl border border-purple-200/60 bg-white/70 backdrop-blur-xl shadow-xl mb-8">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-slate-900">AI-Powered Recommendations</h2>
+                    <Link
+                        href="/dashboard/chatbot"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-100 to-blue-100 hover:from-purple-200 hover:to-blue-200 transition-all border border-purple-200/60 text-purple-700 hover:text-purple-900"
+                    >
+                        <MessageCircle className="h-4 w-4" />
+                        <span className="text-sm font-medium hidden md:inline">AI Assistant</span>
+                    </Link>
+                </div>
+                
+                <div className="space-y-6">
                 {/* Healthcare Recommendations */}
                 {analytics?.bySector.HEALTHCARE && analytics.bySector.HEALTHCARE.overallScore > 0 && (
-                    <div className="p-6 md:p-8 rounded-2xl border border-blue-200/60 bg-white/70 backdrop-blur-xl shadow-xl">
+                    <div className="p-6 rounded-xl border border-blue-200/60 bg-white/50 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
@@ -549,7 +562,7 @@ export default function AnalyticsDashboard() {
 
                 {/* Agriculture Recommendations */}
                 {analytics?.bySector.AGRICULTURE && analytics.bySector.AGRICULTURE.overallScore > 0 && (
-                    <div className="p-6 md:p-8 rounded-2xl border border-green-200/60 bg-white/70 backdrop-blur-xl shadow-xl">
+                    <div className="p-6 rounded-xl border border-green-200/60 bg-white/50 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
@@ -645,7 +658,7 @@ export default function AnalyticsDashboard() {
 
                 {/* Urban Recommendations */}
                 {analytics?.bySector.URBAN && analytics.bySector.URBAN.overallScore > 0 && (
-                    <div className="p-6 md:p-8 rounded-2xl border border-cyan-200/60 bg-white/70 backdrop-blur-xl shadow-xl">
+                    <div className="p-6 rounded-xl border border-cyan-200/60 bg-white/50 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center">
@@ -738,6 +751,7 @@ export default function AnalyticsDashboard() {
                         )}
                     </div>
                 )}
+                </div>
             </div>
         </div>
     );
