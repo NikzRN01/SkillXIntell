@@ -3,11 +3,11 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 // ============================================
@@ -19,7 +19,7 @@ model User {
   email         String   @unique
   name          String
   passwordHash  String?
-  role          Role     @default(STUDENT)
+  role          String   @default("STUDENT") // Enum Role
   avatar        String?
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
@@ -37,13 +37,6 @@ model User {
   @@index([role])
 }
 
-enum Role {
-  STUDENT
-  EDUCATOR
-  EMPLOYER
-  ADMIN
-}
-
 // ============================================
 // PROFILE
 // ============================================
@@ -53,7 +46,7 @@ model Profile {
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bio             String?  @db.Text
+  bio             String?
   phone           String?
   location        String?
   linkedIn        String?
@@ -62,15 +55,15 @@ model Profile {
   dateOfBirth     DateTime?
 
   // Education history (JSON array)
-  education       Json?
+  education       String? // Json stored as string
 
   // Work experience (JSON array)
-  experience      Json?
+  experience      String? // Json stored as string
 
   // Interests and goals
-  interests       String[]
-  targetSectors   Sector[]
-  careerGoals     String?  @db.Text
+  interests       String? // String[] stored as JSON string "[]"
+  targetSectors   String? // Sector[] stored as JSON string "[]"
+  careerGoals     String?
 
   // Preferences
   preferredLearningStyle String?
@@ -80,12 +73,6 @@ model Profile {
   updatedAt       DateTime @updatedAt
 
   @@index([userId])
-}
-
-enum Sector {
-  HEALTHCARE
-  AGRICULTURE
-  URBAN
 }
 
 // ============================================
@@ -98,8 +85,8 @@ model Skill {
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   name              String
-  category          SkillCategory
-  sector            Sector
+  category          String        // Enum SkillCategory
+  sector            String        // Enum Sector
   proficiencyLevel  Int           // 1-5 scale
 
   // Verification
@@ -107,8 +94,8 @@ model Skill {
   verificationSource String?
 
   // Metadata
-  tags              String[]
-  description       String?       @db.Text
+  tags              String?       // String[] stored as JSON string "[]"
+  description       String?
   yearsOfExperience Float?
   lastUsed          DateTime?
 
@@ -123,43 +110,6 @@ model Skill {
   @@index([name])
 }
 
-enum SkillCategory {
-  // Healthcare
-  CLINICAL_INFORMATICS
-  HEALTH_DATA_ANALYTICS
-  EHR_SYSTEMS
-  TELEMEDICINE
-  MEDICAL_CODING
-  HIPAA_COMPLIANCE
-  HEALTHCARE_IT
-
-  // Agriculture
-  PRECISION_AGRICULTURE
-  FARM_MANAGEMENT_SOFTWARE
-  AGRICULTURAL_IOT
-  CROP_MONITORING
-  SOIL_ANALYSIS
-  SUSTAINABLE_FARMING
-  AGRIBUSINESS
-
-  // Urban
-  URBAN_PLANNING
-  GIS_MAPPING
-  SMART_INFRASTRUCTURE
-  IOT_SENSORS
-  SUSTAINABLE_URBAN_DESIGN
-  TRANSPORTATION_SYSTEMS
-  ENERGY_MANAGEMENT
-
-  // Cross-sector
-  DATA_ANALYSIS
-  MACHINE_LEARNING
-  PROJECT_MANAGEMENT
-  COMMUNICATION
-  LEADERSHIP
-  RESEARCH
-}
-
 // ============================================
 // PROJECTS
 // ============================================
@@ -170,30 +120,30 @@ model Project {
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   title           String
-  description     String          @db.Text
-  sector          Sector
-  category        ProjectCategory
+  description     String
+  sector          String          // Enum Sector
+  category        String          // Enum ProjectCategory
 
   // Skills and technologies
-  skillsUsed      String[]
-  technologies    String[]
+  skillsUsed      String?         // String[] stored as JSON string "[]"
+  technologies    String?         // String[] stored as JSON string "[]"
 
   // Outcomes and impact
-  outcomes        String          @db.Text
-  impact          String?         @db.Text
-  metrics         Json?
+  outcomes        String
+  impact          String?
+  metrics         String?         // Json stored as string
 
   // Timeline
   startDate       DateTime
   endDate         DateTime?
-  status          ProjectStatus   @default(IN_PROGRESS)
+  status          String          @default("IN_PROGRESS") // Enum ProjectStatus
 
   // Collaboration
   teamSize        Int?
   role            String?
 
   // Attachments and links
-  attachments     Json?
+  attachments     String?         // Json stored as string
   repositoryUrl   String?
   liveUrl         String?
 
@@ -207,22 +157,6 @@ model Project {
   @@index([sector, status])
 }
 
-enum ProjectCategory {
-  RESEARCH
-  DEVELOPMENT
-  IMPLEMENTATION
-  CASE_STUDY
-  INTERNSHIP
-  ACADEMIC
-}
-
-enum ProjectStatus {
-  PLANNING
-  IN_PROGRESS
-  COMPLETED
-  ARCHIVED
-}
-
 // ============================================
 // CERTIFICATIONS
 // ============================================
@@ -234,7 +168,7 @@ model Certification {
 
   name            String
   issuingOrg      String
-  sector          Sector
+  sector          String   // Enum Sector
 
   credentialId    String?
   credentialUrl   String?
@@ -244,7 +178,7 @@ model Certification {
   neverExpires    Boolean  @default(false)
 
   // Related skills
-  skills          String[]
+  skills          String?  // String[] stored as JSON string "[]"
 
   // Verification
   verified        Boolean  @default(false)
@@ -266,8 +200,8 @@ model LearningPath {
   user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   title           String
-  description     String     @db.Text
-  sector          Sector
+  description     String
+  sector          String     // Enum Sector
   targetRole      String
 
   // Progress tracking
@@ -276,30 +210,23 @@ model LearningPath {
   progress        Float      @default(0)
 
   // Learning steps (JSON array)
-  steps           Json
+  steps           String     // Json stored as string
 
   // AI-generated recommendations
-  recommendations Json?
+  recommendations String?    // Json stored as string
 
   // Timeline
   estimatedDuration Int?
   startDate       DateTime?
   targetEndDate   DateTime?
 
-  status          PathStatus @default(ACTIVE)
+  status          String     @default("ACTIVE") // Enum PathStatus
 
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
   @@index([userId, sector])
   @@index([status])
-}
-
-enum PathStatus {
-  ACTIVE
-  COMPLETED
-  PAUSED
-  ARCHIVED
 }
 
 // ============================================
@@ -311,7 +238,7 @@ model SkillAnalytics {
   userId          String
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  sector          Sector
+  sector          String   // Enum Sector
 
   // Overall scores (0-100)
   overallScore    Float    @default(0)
@@ -319,15 +246,15 @@ model SkillAnalytics {
   industryAlignment Float  @default(0)
 
   // Skill gaps and strengths (JSON)
-  skillGaps       Json
-  strengths       Json
+  skillGaps       String   // Json stored as string
+  strengths       String   // Json stored as string
 
   // Recommendations (JSON)
-  recommendations Json
+  recommendations String   // Json stored as string
 
   // Career insights
-  suggestedRoles  String[]
-  marketDemand    Json?
+  suggestedRoles  String?  // String[] stored as JSON string "[]"
+  marketDemand    String?  // Json stored as string
 
   // Calculation metadata
   calculatedAt    DateTime @default(now())

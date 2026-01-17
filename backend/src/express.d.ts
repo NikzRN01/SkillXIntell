@@ -5,7 +5,7 @@ declare global {
         interface Request {
             user?: {
                 userId: string;
-                supabaseUserId: string;
+                supabaseUserId?: string;
                 email: string;
                 role: string;
             };

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import prisma from '../config/database';
-import { Sector, SkillCategory } from '@prisma/client';
 
 // Healthcare-specific skill categories
 const HEALTHCARE_CATEGORIES = [
@@ -21,7 +20,7 @@ export const getHealthcareSkills = async (req: Request, res: Response) => {
         const skills = await prisma.skill.findMany({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
             orderBy: {
                 createdAt: 'desc',
@@ -30,7 +29,7 @@ export const getHealthcareSkills = async (req: Request, res: Response) => {
 
         res.json({
             success: true,
-            data: skills,
+            data: skills.map(s => ({ ...s, tags: s.tags ? JSON.parse(s.tags) : [] })),
             count: skills.length,
         });
     } catch (error) {
@@ -50,7 +49,7 @@ export const getHealthcareCertifications = async (req: Request, res: Response) =
         const certifications = await prisma.certification.findMany({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
             orderBy: {
                 issueDate: 'desc',
@@ -59,7 +58,7 @@ export const getHealthcareCertifications = async (req: Request, res: Response) =
 
         res.json({
             success: true,
-            data: certifications,
+            data: certifications.map(c => ({ ...c, skills: c.skills ? JSON.parse(c.skills) : [] })),
             count: certifications.length,
         });
     } catch (error) {
@@ -82,13 +81,13 @@ export const addHealthcareCertification = async (req: Request, res: Response) =>
                 userId,
                 name,
                 issuingOrg,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
                 credentialId,
                 credentialUrl,
                 issueDate: new Date(issueDate),
                 expiryDate: expiryDate ? new Date(expiryDate) : null,
                 neverExpires: neverExpires || false,
-                skills: skills || [],
+                skills: skills ? JSON.stringify(skills) : "[]",
             },
         });
 
@@ -114,7 +113,7 @@ export const getHealthcareProjects = async (req: Request, res: Response) => {
         const projects = await prisma.project.findMany({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
             orderBy: {
                 startDate: 'desc',
@@ -123,7 +122,13 @@ export const getHealthcareProjects = async (req: Request, res: Response) => {
 
         res.json({
             success: true,
-            data: projects,
+            data: projects.map(p => ({
+                ...p,
+                skillsUsed: p.skillsUsed ? JSON.parse(p.skillsUsed) : [],
+                technologies: p.technologies ? JSON.parse(p.technologies) : [],
+                metrics: p.metrics ? JSON.parse(p.metrics) : null,
+                attachments: p.attachments ? JSON.parse(p.attachments) : null
+            })),
             count: projects.length,
         });
     } catch (error) {
@@ -144,7 +149,7 @@ export const getHealthcareCompetencyAssessment = async (req: Request, res: Respo
         const skills = await prisma.skill.findMany({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
         });
 
@@ -152,7 +157,7 @@ export const getHealthcareCompetencyAssessment = async (req: Request, res: Respo
         const certifications = await prisma.certification.findMany({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
         });
 
@@ -160,7 +165,7 @@ export const getHealthcareCompetencyAssessment = async (req: Request, res: Respo
         const projects = await prisma.project.findMany({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
         });
 
@@ -230,7 +235,7 @@ export const getHealthcareCareerPathways = async (req: Request, res: Response) =
         const skills = await prisma.skill.findMany({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
         });
 
@@ -238,7 +243,7 @@ export const getHealthcareCareerPathways = async (req: Request, res: Response) =
         const analytics = await prisma.skillAnalytics.findFirst({
             where: {
                 userId,
-                sector: Sector.HEALTHCARE,
+                sector: 'HEALTHCARE',
             },
             orderBy: {
                 calculatedAt: 'desc',

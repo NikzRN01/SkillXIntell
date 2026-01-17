@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import prisma from '../config/database';
-import { Sector } from '@prisma/client';
 
 // Generate or update skill analytics for a user
 export const generateSkillAnalytics = async (req: Request, res: Response) => {
@@ -17,24 +16,24 @@ export const generateSkillAnalytics = async (req: Request, res: Response) => {
 
         // Get user's skills for the sector
         const skills = await prisma.skill.findMany({
-            where: { userId, sector: sector as Sector },
+            where: { userId, sector: sector as string },
         });
 
         const certifications = await prisma.certification.findMany({
-            where: { userId, sector: sector as Sector },
+            where: { userId, sector: sector as string },
         });
 
         const projects = await prisma.project.findMany({
-            where: { userId, sector: sector as Sector },
+            where: { userId, sector: sector as string },
         });
 
         // Calculate scores
         const overallScore = calculateOverallScore(skills, certifications, projects);
         const careerReadiness = calculateCareerReadiness(skills, certifications, projects);
-        const industryAlignment = calculateIndustryAlignment(skills, sector as Sector);
+        const industryAlignment = calculateIndustryAlignment(skills, sector as string);
 
         // Identify skill gaps
-        const skillGaps = identifySkillGaps(skills, sector as Sector);
+        const skillGaps = identifySkillGaps(skills, sector as string);
 
         // Identify strengths
         const strengths = identifyStrengths(skills);
@@ -43,13 +42,13 @@ export const generateSkillAnalytics = async (req: Request, res: Response) => {
         const recommendations = generateRecommendations(skills, skillGaps, certifications);
 
         // Suggest roles
-        const suggestedRoles = suggestCareerRoles(skills, sector as Sector);
+        const suggestedRoles = suggestCareerRoles(skills, sector as string);
 
         // Delete existing analytics for this user/sector if exists
         await prisma.skillAnalytics.deleteMany({
             where: {
                 userId,
-                sector: sector as Sector,
+                sector: sector as string,
             },
         });
 
@@ -57,14 +56,14 @@ export const generateSkillAnalytics = async (req: Request, res: Response) => {
         const analytics = await prisma.skillAnalytics.create({
             data: {
                 userId,
-                sector: sector as Sector,
+                sector: sector as string,
                 overallScore,
                 careerReadiness,
                 industryAlignment,
-                skillGaps,
-                strengths,
-                recommendations,
-                suggestedRoles,
+                skillGaps: JSON.stringify(skillGaps),
+                strengths: JSON.stringify(strengths),
+                recommendations: JSON.stringify(recommendations),
+                suggestedRoles: suggestedRoles ? JSON.stringify(suggestedRoles) : undefined,
                 dataPoints: skills.length + certifications.length + projects.length,
             },
         });
@@ -92,7 +91,7 @@ export const getAnalytics = async (req: Request, res: Response) => {
         const analytics = await prisma.skillAnalytics.findFirst({
             where: {
                 userId,
-                sector: sector as Sector,
+                sector: sector as string,
             },
             orderBy: {
                 calculatedAt: 'desc',
@@ -108,7 +107,14 @@ export const getAnalytics = async (req: Request, res: Response) => {
 
         return res.json({
             success: true,
-            data: analytics,
+            data: {
+                ...analytics,
+                skillGaps: JSON.parse(analytics.skillGaps),
+                strengths: JSON.parse(analytics.strengths),
+                recommendations: JSON.parse(analytics.recommendations),
+                suggestedRoles: analytics.suggestedRoles ? JSON.parse(analytics.suggestedRoles) : [],
+                marketDemand: analytics.marketDemand ? JSON.parse(analytics.marketDemand) : null
+            },
         });
     } catch (error) {
         console.error('Error fetching analytics:', error);
@@ -193,7 +199,7 @@ function calculateCareerReadiness(skills: any[], certifications: any[], projects
     return readiness;
 }
 
-function calculateIndustryAlignment(skills: any[], sector: Sector): number {
+function calculateIndustryAlignment(skills: any[], sector: string): number {
     // Simple alignment based on skill count and proficiency
     const avgProficiency = skills.length > 0
         ? skills.reduce((sum, s) => sum + s.proficiencyLevel, 0) / skills.length
@@ -207,7 +213,7 @@ function calculateIndustryAlignment(skills: any[], sector: Sector): number {
     return alignment;
 }
 
-function identifySkillGaps(skills: any[], sector: Sector): any {
+function identifySkillGaps(skills: any[], sector: string): any {
     const sectorSkillCategories: Record<string, string[]> = {
         HEALTHCARE: ['CLINICAL_INFORMATICS', 'HEALTH_DATA_ANALYTICS', 'EHR_SYSTEMS', 'TELEMEDICINE', 'HIPAA_COMPLIANCE'],
         AGRICULTURE: ['PRECISION_AGRICULTURE', 'AGRICULTURAL_IOT', 'CROP_MONITORING', 'SUSTAINABLE_FARMING'],
@@ -277,7 +283,7 @@ function generateRecommendations(skills: any[], gaps: any[], certifications: any
     return recommendations;
 }
 
-function suggestCareerRoles(skills: any[], sector: Sector): string[] {
+function suggestCareerRoles(skills: any[], sector: string): string[] {
     const rolesBySector: Record<string, string[]> = {
         HEALTHCARE: ['Clinical Informatics Specialist', 'Health Data Analyst', 'Healthcare IT Manager', 'Telemedicine Coordinator'],
         AGRICULTURE: ['Precision Agriculture Specialist', 'AgriTech Data Analyst', 'Sustainable Farming Consultant', 'Farm Technology Manager'],

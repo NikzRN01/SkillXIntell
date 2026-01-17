@@ -91,7 +91,12 @@ export async function getUserSkills(userId: string, filters?: SkillFilters) {
         ],
     });
 
-    return skills;
+    return skills.map(skill => ({
+        ...skill,
+        tags: skill.tags ? JSON.parse(skill.tags) : [],
+        sector: skill.sector as Sector,
+        category: skill.category as SkillCategory
+    }));
 }
 
 /**
@@ -112,7 +117,7 @@ export async function createSkill(userId: string, data: CreateSkillData) {
             proficiencyLevel: data.proficiencyLevel,
             verified: data.verified || false,
             verificationSource: data.verificationSource,
-            tags: data.tags || [],
+            tags: JSON.stringify(data.tags || []),
             description: data.description,
             yearsOfExperience: data.yearsOfExperience,
             lastUsed: data.lastUsed,
@@ -157,7 +162,7 @@ export async function updateSkill(
             category: data.category,
             sector: data.sector,
             proficiencyLevel: data.proficiencyLevel,
-            tags: data.tags,
+            tags: data.tags ? JSON.stringify(data.tags) : undefined,
             description: data.description,
             yearsOfExperience: data.yearsOfExperience,
             lastUsed: data.lastUsed,

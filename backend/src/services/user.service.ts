@@ -48,8 +48,18 @@ export async function getUserProfile(userId: string) {
     // Remove password hash from response
     const { passwordHash, ...userWithoutPassword } = user;
 
+    // Parse profile JSON fields
+    const profile = userWithoutPassword.profile ? {
+        ...userWithoutPassword.profile,
+        education: userWithoutPassword.profile.education ? JSON.parse(userWithoutPassword.profile.education) : [],
+        experience: userWithoutPassword.profile.experience ? JSON.parse(userWithoutPassword.profile.experience) : [],
+        interests: userWithoutPassword.profile.interests ? JSON.parse(userWithoutPassword.profile.interests) : [],
+        targetSectors: userWithoutPassword.profile.targetSectors ? JSON.parse(userWithoutPassword.profile.targetSectors) : [],
+    } : null;
+
     return {
         ...userWithoutPassword,
+        profile,
         stats: {
             totalSkills: user.skills.length,
             totalProjects: user.projects.length,
@@ -83,10 +93,10 @@ export async function updateUserProfile(userId: string, data: UpdateProfileData)
             github: data.github,
             portfolio: data.portfolio,
             dateOfBirth: data.dateOfBirth,
-            education: data.education,
-            experience: data.experience,
-            interests: data.interests,
-            targetSectors: data.targetSectors,
+            education: data.education ? JSON.stringify(data.education) : undefined,
+            experience: data.experience ? JSON.stringify(data.experience) : undefined,
+            interests: data.interests ? JSON.stringify(data.interests) : undefined,
+            targetSectors: data.targetSectors ? JSON.stringify(data.targetSectors) : undefined,
             careerGoals: data.careerGoals,
             preferredLearningStyle: data.preferredLearningStyle,
             availableHoursPerWeek: data.availableHoursPerWeek,
@@ -186,7 +196,17 @@ export async function getPublicProfile(userId: string) {
         throw new Error('User not found');
     }
 
-    return user;
+    // Parse profile JSON fields
+    const parsedProfile = user.profile ? {
+        ...user.profile,
+        interests: user.profile.interests ? JSON.parse(user.profile.interests) : [],
+        targetSectors: user.profile.targetSectors ? JSON.parse(user.profile.targetSectors) : [],
+    } : null;
+
+    return {
+        ...user,
+        profile: parsedProfile
+    };
 }
 
 /**
