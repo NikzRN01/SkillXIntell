@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { clearAuthStorage, useStoredToken, useStoredUser } from "@/lib/auth";
+import { useStoredToken, useStoredUser } from "@/lib/auth";
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -15,11 +14,6 @@ export default function DashboardPage() {
             router.replace("/login");
         }
     }, [router, token, user]);
-
-    const handleLogout = () => {
-        clearAuthStorage();
-        router.replace("/login");
-    };
 
     if (!user) {
         return (

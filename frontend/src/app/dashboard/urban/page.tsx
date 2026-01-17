@@ -20,15 +20,41 @@ interface CareerPathway {
     demand: string;
 }
 
-interface UrbanSkill {}
+interface UrbanSkill {
+    id: string;
+    name: string;
+    sector: string;
+    category: string;
+    proficiencyLevel: number;
+    verified?: boolean;
+    tags?: string[];
+    description?: string;
+}
+
+const proficiencyColors: Record<number, string> = {
+    1: "bg-red-100 text-red-700",
+    2: "bg-orange-100 text-orange-700",
+    3: "bg-yellow-100 text-yellow-800",
+    4: "bg-green-100 text-green-700",
+    5: "bg-emerald-100 text-emerald-700",
+};
+
+const proficiencyLabels: Record<number, string> = {
+    1: "Beginner",
+    2: "Developing",
+    3: "Competent",
+    4: "Proficient",
+    5: "Expert",
+};
+
+const getProficiencyColor = (level: number) => proficiencyColors[level] || "bg-muted text-muted-foreground";
+const getProficiencyLabel = (level: number) => proficiencyLabels[level] || "Unknown";
 
 export default function UrbanDashboard() {
     const [stats, setStats] = useState<UrbanStats | null>(null);
     const [pathways, setPathways] = useState<CareerPathway[]>([]);
     const [loading, setLoading] = useState(true);
     const [skills, setSkills] = useState<UrbanSkill[]>([]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [sectorFilter, setSectorFilter] = useState("");
 
     useEffect(() => {
         fetchUrbanData();
@@ -113,11 +139,7 @@ export default function UrbanDashboard() {
         }
     };
 
-    const filteredSkills = skills.filter((skill) => {
-        const matchesSearch = skill.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesSector = !sectorFilter || skill.sector === sectorFilter;
-        return matchesSearch && matchesSector;
-    });
+    const filteredSkills = skills;
 
     if (loading) {
         return (
@@ -197,8 +219,6 @@ export default function UrbanDashboard() {
             {/* Quick Actions */}
             <div className="grid md:grid-cols-3 gap-6">
                 <Link
-                    href="/dashboard/skills/add"
-                    className="flex items-center space-x-2 px-5 py-2.5 bg-linear-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     href="/dashboard/skills?sector=URBAN"
                     className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-2xl hover:border-accent/50 transition-all transform hover:-translate-y-1 group"
                 >
@@ -310,9 +330,7 @@ export default function UrbanDashboard() {
             {filteredSkills.length === 0 ? (
                 <div className="bg-card rounded-2xl shadow-xl p-16 text-center border-2 border-dashed border-border">
                     <p className="text-muted-foreground mb-6 text-lg">
-                        {searchTerm || sectorFilter
-                            ? "No skills found matching your filters"
-                            : "You haven&apos;t added any skills yet"}
+                        You haven&apos;t added any skills yet
                     </p>
                     <Link
                         href="/dashboard/skills/add"

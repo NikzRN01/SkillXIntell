@@ -13,17 +13,8 @@ interface HealthcareStats {
     averageProficiency: string;
 }
 
-interface CareerPathway {
-    role: string;
-    description: string;
-    matchScore: number;
-    salaryRange: string;
-    demand: string;
-}
-
 export default function HealthcareDashboard() {
     const [stats, setStats] = useState<HealthcareStats | null>(null);
-    const [pathways, setPathways] = useState<CareerPathway[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchHealthcareStats = useCallback(async () => {
@@ -54,18 +45,6 @@ export default function HealthcareDashboard() {
                 }
             }
 
-            // Fetch career pathways
-            const pathwaysRes = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/healthcare/career-pathways`,
-                { headers }
-            );
-
-            if (pathwaysRes.ok) {
-                const pathwaysData = await pathwaysRes.json();
-                if (pathwaysData.success && pathwaysData.data.pathways) {
-                    setPathways(pathwaysData.data.pathways.slice(0, 2));
-                }
-            }
         } catch (error) {
             console.error("Error fetching healthcare data:", error);
             // Set default values on error

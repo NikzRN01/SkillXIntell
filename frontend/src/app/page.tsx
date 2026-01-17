@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Activity, TrendingUp, Target } from "lucide-react";
-import SiteNavbar from "@/components/layout/site-navbar";
+import { Activity, TrendingUp, Target, Brain } from "lucide-react";
 import SiteFooter from "@/components/layout/site-footer";
 import Button from "@/components/ui/button";
 

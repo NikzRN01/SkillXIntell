@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { BarChart3, TrendingUp, Target, Award, Brain, RefreshCw } from "lucide-react";
 
 interface SectorAnalytics {
-    [key: string]: any;
+    overallScore: number;
+    careerReadiness: number;
+    industryAlignment: number;
 }
 interface CrossSectorAnalytics {
     overall: {

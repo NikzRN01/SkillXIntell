@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { TrendingUp, Award, Briefcase, Target, Sprout, Plus, Calendar, ExternalLink, X, Trash2 } from "lucide-react";
+import { Award, Briefcase, Target, Sprout, Plus, Calendar, ExternalLink, X, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 interface Certification {
@@ -174,7 +174,7 @@ export default function CertificationsPage() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [sectorFilter]);
 
     useEffect(() => {
         fetchAgricultureStats();

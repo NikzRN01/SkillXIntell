@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Briefcase, Plus, Calendar, ExternalLink, Trash2, Github, Globe, X, Users } from "lucide-react";
+import { Briefcase, Plus, Calendar, Trash2, Github, Globe, X, Users } from "lucide-react";
 
 interface Project {
     id: string;
