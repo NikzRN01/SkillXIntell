@@ -1,56 +1,55 @@
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *));
-
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 222 47% 11%;
+    /* Color Palette */
+    /* #2F4156 - Dark Blue-Gray */
+    /* #567C8D - Medium Blue-Gray */
+    /* #C8D9E6 - Light Blue-Gray */
+    /* #FFFFFF - White */
+    
+    /* Base colors - Light blue-gray background */
+    --background: 212 26% 83%;
+    --foreground: 212 32% 23%;
+    
+    /* Card colors - Pure white (primary) */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 212 32% 23%;
+    
+    /* Popover */
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 210 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 150 60% 50%;
+    --popover-foreground: 212 32% 23%;
+    
+    /* Primary - White */
+    --primary: 0 0% 100%;
+    --primary-foreground: 212 32% 23%;
+    
+    /* Secondary - Medium Blue-Gray */
+    --secondary: 212 23% 42%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 280 60% 60%;
+    
+    /* Muted - Light shade for subtle elements */
+    --muted: 212 26% 88%;
+    --muted-foreground: 212 23% 42%;
+    
+    /* Accent - Dark Blue-Gray for emphasis */
+    --accent: 212 32% 23%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
+    
+    /* Destructive - Vibrant Red */
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 210 100% 50%;
-    --radius: 0.5rem;
+    
+    /* Borders and Inputs */
+    --border: 212 23% 55%;
+    --input: 0 0% 100%;
+    --ring: 212 32% 23%;
+    --radius: 0.75rem;
 
-    /* Sector colors */
-    --healthcare: 340 75% 55%;
-    --agriculture: 142 71% 45%;
-    --urban: 217 91% 60%;
-  }
-
-  .dark {
-    --background: 222 47% 11%;
-    --foreground: 0 0% 98%;
-    --card: 222 47% 15%;
-    --card-foreground: 0 0% 98%;
-    --popover: 222 47% 15%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 210 100% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 150 60% 60%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 280 60% 70%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 210 100% 60%;
+    /* Sector-specific colors */
+    --healthcare: 212 32% 23%;
+    --agriculture: 212 23% 42%;
+    --urban: 212 26% 83%;
   }
 }
 
@@ -63,6 +62,19 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Enhanced shadows for depth */
+  .shadow {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+  
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+  .shadow-xl {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 }
 

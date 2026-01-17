@@ -1,50 +1,87 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Building2, Award, Briefcase, Target, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { Plus, Filter, Search } from "lucide-react";
 
-interface UrbanStats {
-    totalSkills: number;
-    certifications: number;
-    completedProjects: number;
-    readinessScore: number;
-    averageProficiency: string;
+interface Skill {
+    id: string;
+    name: string;
+    category: string;
+    sector: string;
+    proficiencyLevel: number;
+    verified: boolean;
+    tags: string[];
+    description?: string;
 }
 
-export default function UrbanDashboard() {
-    const [stats, setStats] = useState<UrbanStats | null>(null);
+import { useSearchParams } from "next/navigation";
+
+export default function SkillsPage() {
+    const searchParams = useSearchParams();
+    const [skills, setSkills] = useState<Skill[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sectorFilter, setSectorFilter] = useState(searchParams.get("sector") || "");
 
     useEffect(() => {
-        fetchUrbanStats();
-    }, []);
+        fetchSkills();
+    }, [sectorFilter]);
 
-    const fetchUrbanStats = async () => {
+    const fetchSkills = async () => {
         try {
-            // TODO: Replace with actual API call
-            // const response = await fetch('/api/urban/assessment');
-            // const data = await response.json();
+            const token = localStorage.getItem("token");
+            const params = new URLSearchParams();
+            if (sectorFilter) params.append("sector", sectorFilter);
 
-            // Mock data
-            setStats({
-                totalSkills: 0,
-                certifications: 0,
-                completedProjects: 0,
-                readinessScore: 0,
-                averageProficiency: "N/A",
-            });
+            const response = await fetch(
+                `http://localhost:5000/api/skills?${params.toString()}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setSkills(data.skills);
+            }
         } catch (error) {
-            console.error("Error fetching urban stats:", error);
+            console.error("Failed to fetch skills:", error);
         } finally {
             setLoading(false);
         }
     };
 
+    const filteredSkills = skills.filter((skill) =>
+        skill.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const getProficiencyLabel = (level: number) => {
+        const labels = ["", "Beginner", "Intermediate", "Advanced", "Expert", "Master"];
+        return labels[level] || "Unknown";
+    };
+
+    const getProficiencyColor = (level: number) => {
+        const colors = [
+            "",
+            "bg-gray-200 text-gray-700",
+            "bg-blue-200 text-blue-700",
+            "bg-green-200 text-green-700",
+            "bg-purple-200 text-purple-700",
+            "bg-yellow-200 text-yellow-700",
+        ];
+        return colors[level] || colors[0];
+    };
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="text-muted-foreground">Loading urban development data...</div>
+            <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground font-medium">Loading skills...</p>
+                </div>
             </div>
         );
     }
@@ -52,186 +89,177 @@ export default function UrbanDashboard() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-urban/10 flex items-center justify-center">
-                    <Building2 className="h-6 w-6 text-urban" />
-                </div>
-                <div>
-                    <h1 className="text-3xl font-bold">Urban & Smart Cities</h1>
-                    <p className="text-muted-foreground">
-                        Track your smart city and urban planning expertise
-                    </p>
-                </div>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Total Skills</span>
-                        <Target className="h-4 w-4 text-urban" />
-                    </div>
-                    <div className="text-3xl font-bold">{stats?.totalSkills || 0}</div>
-                    <p className="text-xs text-muted-foreground mt-1">Urban tech skills</p>
-                </div>
-
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Certifications</span>
-                        <Award className="h-4 w-4 text-urban" />
-                    </div>
-                    <div className="text-3xl font-bold">{stats?.certifications || 0}</div>
-                    <p className="text-xs text-muted-foreground mt-1">Active credentials</p>
-                </div>
-
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Projects</span>
-                        <Briefcase className="h-4 w-4 text-urban" />
-                    </div>
-                    <div className="text-3xl font-bold">{stats?.completedProjects || 0}</div>
-                    <p className="text-xs text-muted-foreground mt-1">Completed</p>
-                </div>
-
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Readiness Score</span>
-                        <TrendingUp className="h-4 w-4 text-urban" />
-                    </div>
-                    <div className="text-3xl font-bold">{stats?.readinessScore || 0}%</div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                        Avg proficiency: {stats?.averageProficiency || "0"}/5
-                    </p>
-                </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold text-foreground">
+                    My Skills
+                </h1>
                 <Link
-                    href="/dashboard/skills?sector=URBAN"
-                    className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-shadow"
+                    href="/dashboard/skills/add"
+                    className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                 >
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-urban/10 flex items-center justify-center">
-                            <Target className="h-5 w-5 text-urban" />
-                        </div>
-                        <h3 className="font-semibold">Skills Tracker</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Manage your smart city and urban planning skills
-                    </p>
-                </Link>
-
-                <Link
-                    href="/dashboard/certifications?sector=URBAN"
-                    className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-shadow"
-                >
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-urban/10 flex items-center justify-center">
-                            <Award className="h-5 w-5 text-urban" />
-                        </div>
-                        <h3 className="font-semibold">Certifications</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Track GIS and urban development certifications
-                    </p>
-                </Link>
-
-                <Link
-                    href="/dashboard/projects?sector=URBAN"
-                    className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-shadow"
-                >
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-urban/10 flex items-center justify-center">
-                            <Briefcase className="h-5 w-5 text-urban" />
-                        </div>
-                        <h3 className="font-semibold">Projects</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Showcase your urban planning and smart city projects
-                    </p>
+                    <Plus className="h-5 w-5" />
+                    <span>Add Skill</span>
                 </Link>
             </div>
 
-            {/* Career Pathways */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-                <h2 className="text-xl font-semibold mb-4">Recommended Career Pathways</h2>
-                <div className="space-y-3">
-                    <div className="p-4 rounded-lg bg-muted/50">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold">Smart City Planner</h3>
-                            <span className="text-sm font-medium text-urban">88% Match</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Design and implement smart city initiatives
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>💰 $65,000 - $100,000</span>
-                            <span>•</span>
-                            <span>📈 Very High Demand</span>
-                        </div>
+            {/* Filters */}
+            <div className="bg-card rounded-2xl shadow-lg p-6 border-2 border-border">
+                <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Search */}
+                    <div className="flex-1 relative">
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Search skills..."
+                            className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
+                        />
                     </div>
 
-                    <div className="p-4 rounded-lg bg-muted/50">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold">GIS Specialist</h3>
-                            <span className="text-sm font-medium text-urban">85% Match</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Analyze spatial data for urban development
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>💰 $55,000 - $85,000</span>
-                            <span>•</span>
-                            <span>📈 High Demand</span>
-                        </div>
-                    </div>
-
-                    <div className="p-4 rounded-lg bg-muted/50">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold">Smart Transportation Engineer</h3>
-                            <span className="text-sm font-medium text-urban">80% Match</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Develop intelligent transportation systems
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>💰 $70,000 - $105,000</span>
-                            <span>•</span>
-                            <span>📈 High Demand</span>
-                        </div>
+                    {/* Sector Filter */}
+                    <div className="sm:w-48">
+                        <select
+                            value={sectorFilter}
+                            onChange={(e) => setSectorFilter(e.target.value)}
+                            className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-background text-foreground font-medium"
+                        >
+                            <option value="">All Sectors</option>
+                            <option value="HEALTHCARE">Healthcare</option>
+                            <option value="AGRICULTURE">Agriculture</option>
+                            <option value="URBAN">Urban</option>
+                        </select>
                     </div>
                 </div>
-                <Link
-                    href="/dashboard/urban/career-pathways"
-                    className="mt-4 inline-block text-sm text-urban hover:underline"
-                >
-                    View all career pathways →
-                </Link>
             </div>
 
-            {/* Transformation Readiness */}
-            <div className="p-6 rounded-xl border border-border bg-card">
-                <h2 className="text-xl font-semibold mb-4">Urban Transformation Readiness</h2>
-                <div className="space-y-4">
-                    <div>
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium">Overall Readiness</span>
-                            <span className="text-sm font-medium">{stats?.readinessScore || 0}%</span>
-                        </div>
-                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-urban transition-all"
-                                style={{ width: `${stats?.readinessScore || 0}%` }}
-                            />
-                        </div>
-                    </div>
+            {/* Skills Grid */}
+            {filteredSkills.length === 0 ? (
+                <div className="bg-card rounded-2xl shadow-xl p-16 text-center border-2 border-dashed border-border">
+                    <p className="text-muted-foreground mb-6 text-lg">
+                        {searchTerm || sectorFilter
+                            ? "No skills found matching your filters"
+                            : "You haven't added any skills yet"}
+                    </p>
                     <Link
-                        href="/dashboard/urban/assessment"
-                        className="inline-block text-sm text-urban hover:underline"
+                        href="/dashboard/skills/add"
+                        className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                     >
-                        View detailed assessment →
+                        <Plus className="h-5 w-5" />
+                        <span>Add Your First Skill</span>
                     </Link>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredSkills.map((skill) => (
+                        <div
+                            key={skill.id}
+                            className="bg-card rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all transform hover:-translate-y-1 border-2 border-border"
+                        >
+                            {/* Skill Header */}
+                            <div className="flex items-start justify-between mb-4">
+                                <h3 className="text-lg font-bold text-foreground">
+                                    {skill.name}
+                                </h3>
+                                {skill.verified && (
+                                    <span className="px-3 py-1 bg-secondary/20 text-secondary text-xs rounded-xl font-semibold border border-secondary/30">
+                                        Verified
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Category & Sector */}
+                            <div className="space-y-2 mb-4">
+                                <p className="text-sm text-muted-foreground font-medium">
+                                    {skill.category.replace(/_/g, " ")}
+                                </p>
+                                <span className="inline-block px-3 py-1 bg-accent/20 text-accent text-xs rounded-xl font-semibold border border-accent/30">
+                                    {skill.sector}
+                                </span>
+                            </div>
+
+                            {/* Proficiency */}
+                            <div className="mb-4">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm text-muted-foreground font-semibold">
+                                        Proficiency
+                                    </span>
+                                    <span
+                                        className={`px-3 py-1 text-xs rounded-xl font-semibold ${getProficiencyColor(
+                                            skill.proficiencyLevel
+                                        )}`}
+                                    >
+                                        {getProficiencyLabel(skill.proficiencyLevel)}
+                                    </span>
+                                </div>
+                                <div className="w-full bg-muted rounded-full h-3 shadow-inner">
+                                    <div
+                                        className="bg-gradient-to-r from-primary to-accent h-3 rounded-full transition-all shadow-md"
+                                        style={{ width: `${(skill.proficiencyLevel / 5) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Description */}
+                            {skill.description && (
+                                <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
+                                    {skill.description}
+                                </p>
+                            )}
+
+                            {/* Tags */}
+                            {skill.tags && skill.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    {skill.tags.slice(0, 3).map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="px-3 py-1 bg-muted text-muted-foreground text-xs rounded-lg font-medium"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                    {skill.tags.length > 3 && (
+                                        <span className="px-3 py-1 text-muted-foreground text-xs font-medium">
+                                            +{skill.tags.length - 3} more
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Stats */}
+            <div className="bg-card rounded-2xl shadow-lg p-8 border-2 border-border">
+                <h2 className="text-xl font-bold text-foreground mb-6">
+                    Skills Overview
+                </h2>
+                <div className="grid grid-cols-3 gap-6">
+                    <div className="text-center p-4 rounded-xl bg-primary/10 border-2 border-primary/20">
+                        <div className="text-4xl font-bold text-primary">
+                            {skills.length}
+                        </div>
+                        <div className="text-sm text-muted-foreground font-semibold mt-2">
+                            Total Skills
+                        </div>
+                    </div>
+                    <div className="text-center p-4 rounded-xl bg-secondary/10 border-2 border-secondary/20">
+                        <div className="text-4xl font-bold text-secondary">
+                            {skills.filter((s) => s.verified).length}
+                        </div>
+                        <div className="text-sm text-muted-foreground font-semibold mt-2">
+                            Verified
+                        </div>
+                    </div>
+                    <div className="text-center p-4 rounded-xl bg-accent/10 border-2 border-accent/20">
+                        <div className="text-4xl font-bold text-accent">
+                            {skills.filter((s) => s.proficiencyLevel >= 4).length}
+                        </div>
+                        <div className="text-sm text-muted-foreground font-semibold mt-2">
+                            Expert Level
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

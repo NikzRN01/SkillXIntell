@@ -54,100 +54,108 @@ export default function HealthcareDashboard() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-healthcare/10 flex items-center justify-center">
-                    <Activity className="h-6 w-6 text-healthcare" />
+            <div className="flex items-center gap-4 bg-gradient-to-r from-primary/10 to-primary/5 p-6 rounded-2xl border-2 border-border shadow-lg">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+                    <Activity className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold">Healthcare Informatics</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-3xl font-bold text-foreground">Healthcare Informatics</h1>
+                    <p className="text-muted-foreground font-medium">
                         Track your healthcare IT skills and career progress
                     </p>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Total Skills</span>
-                        <Target className="h-4 w-4 text-healthcare" />
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="p-6 rounded-2xl border-2 border-border bg-card hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm text-muted-foreground font-semibold">Total Skills</span>
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <Target className="h-5 w-5 text-primary" />
+                        </div>
                     </div>
-                    <div className="text-3xl font-bold">{stats?.totalSkills || 0}</div>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <div className="text-4xl font-bold text-foreground">{stats?.totalSkills || 0}</div>
+                    <p className="text-sm text-muted-foreground mt-2 font-medium">
                         {stats?.verifiedSkills || 0} verified
                     </p>
                 </div>
 
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Certifications</span>
-                        <Award className="h-4 w-4 text-healthcare" />
+                <div className="p-6 rounded-2xl border-2 border-border bg-card hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm text-muted-foreground font-semibold">Certifications</span>
+                        <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                            <Award className="h-5 w-5 text-secondary" />
+                        </div>
                     </div>
-                    <div className="text-3xl font-bold">{stats?.activeCertifications || 0}</div>
-                    <p className="text-xs text-muted-foreground mt-1">Active credentials</p>
+                    <div className="text-4xl font-bold text-foreground">{stats?.activeCertifications || 0}</div>
+                    <p className="text-sm text-muted-foreground mt-2 font-medium">Active credentials</p>
                 </div>
 
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Projects</span>
-                        <Briefcase className="h-4 w-4 text-healthcare" />
+                <div className="p-6 rounded-2xl border-2 border-border bg-card hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm text-muted-foreground font-semibold">Projects</span>
+                        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                            <Briefcase className="h-5 w-5 text-accent" />
+                        </div>
                     </div>
-                    <div className="text-3xl font-bold">{stats?.completedProjects || 0}</div>
-                    <p className="text-xs text-muted-foreground mt-1">Completed</p>
+                    <div className="text-4xl font-bold text-foreground">{stats?.completedProjects || 0}</div>
+                    <p className="text-sm text-muted-foreground mt-2 font-medium">Completed</p>
                 </div>
 
-                <div className="p-6 rounded-xl border border-border bg-card">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Competency Score</span>
-                        <TrendingUp className="h-4 w-4 text-healthcare" />
+                <div className="p-6 rounded-2xl border-2 border-border bg-card hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm text-muted-foreground font-semibold">Competency Score</span>
+                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <TrendingUp className="h-5 w-5 text-primary" />
+                        </div>
                     </div>
-                    <div className="text-3xl font-bold">{stats?.competencyScore || 0}%</div>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <div className="text-4xl font-bold text-foreground">{stats?.competencyScore || 0}%</div>
+                    <p className="text-sm text-muted-foreground mt-2 font-medium">
                         Avg proficiency: {stats?.averageProficiency || "0"}/5
                     </p>
                 </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-3 gap-6">
                 <Link
                     href="/dashboard/skills?sector=HEALTHCARE"
-                    className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-shadow"
+                    className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-2xl hover:border-primary/50 transition-all transform hover:-translate-y-1 group"
                 >
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-healthcare/10 flex items-center justify-center">
-                            <Target className="h-5 w-5 text-healthcare" />
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Target className="h-6 w-6 text-white" />
                         </div>
-                        <h3 className="font-semibold">Skills Tracker</h3>
+                        <h3 className="font-bold text-lg text-foreground">Skills Tracker</h3>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                         Manage your healthcare IT skills and proficiency levels
                     </p>
                 </Link>
 
                 <Link
                     href="/dashboard/certifications?sector=HEALTHCARE"
-                    className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-shadow"
+                    className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-2xl hover:border-secondary/50 transition-all transform hover:-translate-y-1 group"
                 >
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-healthcare/10 flex items-center justify-center">
-                            <Award className="h-5 w-5 text-healthcare" />
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary to-secondary/70 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Award className="h-6 w-6 text-white" />
                         </div>
-                        <h3 className="font-semibold">Certifications</h3>
+                        <h3 className="font-bold text-lg text-foreground">Certifications</h3>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                         Track CPHIMS, CAHIMS, and other healthcare certifications
                     </p>
                 </Link>
 
                 <Link
                     href="/dashboard/projects?sector=HEALTHCARE"
-                    className="p-6 rounded-xl border border-border bg-card hover:shadow-lg transition-shadow"
+                    className="p-8 rounded-2xl border-2 border-border bg-card hover:shadow-2xl hover:border-accent/50 transition-all transform hover:-translate-y-1 group"
                 >
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-healthcare/10 flex items-center justify-center">
-                            <Briefcase className="h-5 w-5 text-healthcare" />
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Briefcase className="h-6 w-6 text-white" />
                         </div>
                         <h3 className="font-semibold">Projects</h3>
                     </div>
