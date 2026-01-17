@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Briefcase, Plus, Calendar, Trash2, Github, Globe, X, Users, Search, Pencil } from "lucide-react";
+import { Plus, Calendar, Trash2, Github, Globe, X, Users, Search, Pencil } from "lucide-react";
 
 interface Project {
     id: string;
@@ -17,7 +17,7 @@ interface Project {
     startDate: string;
     endDate?: string;
     status: string;
-    teamSize?: number;
+    teamSize?: string;
     role?: string;
     repositoryUrl?: string;
     liveUrl?: string;
@@ -35,7 +35,7 @@ interface AddProjectForm {
     startDate: string;
     endDate: string;
     status: string;
-    teamSize: number;
+    teamSize: string;
     role: string;
     repositoryUrl: string;
     liveUrl: string;
@@ -64,7 +64,7 @@ export default function ProjectsPage() {
         startDate: "",
         endDate: "",
         status: "IN_PROGRESS",
-        teamSize: 1,
+        teamSize: "",
         role: "",
         repositoryUrl: "",
         liveUrl: "",
@@ -72,30 +72,6 @@ export default function ProjectsPage() {
     });
     const [skillInput, setSkillInput] = useState("");
     const [techInput, setTechInput] = useState("");
-
-    const categories = {
-        HEALTHCARE: [
-            "CLINICAL_INFORMATICS",
-            "HEALTH_DATA_ANALYTICS",
-            "EHR_SYSTEMS",
-            "TELEMEDICINE",
-            "MEDICAL_CODING",
-        ],
-        AGRICULTURE: [
-            "PRECISION_AGRICULTURE",
-            "FARM_MANAGEMENT_SOFTWARE",
-            "AGRICULTURAL_IOT",
-            "CROP_MONITORING",
-            "SUSTAINABLE_FARMING",
-        ],
-        URBAN: [
-            "URBAN_PLANNING",
-            "GIS_MAPPING",
-            "SMART_INFRASTRUCTURE",
-            "IOT_SENSORS",
-            "SUSTAINABLE_URBAN_DESIGN",
-        ],
-    };
 
     const fetchProjects = useCallback(async () => {
         try {
@@ -167,7 +143,7 @@ export default function ProjectsPage() {
                     startDate: "",
                     endDate: "",
                     status: "IN_PROGRESS",
-                    teamSize: 1,
+                    teamSize: "",
                     role: "",
                     repositoryUrl: "",
                     liveUrl: "",
@@ -261,7 +237,7 @@ export default function ProjectsPage() {
                     startDate: "",
                     endDate: "",
                     status: "IN_PROGRESS",
-                    teamSize: 1,
+                    teamSize: "",
                     role: "",
                     repositoryUrl: "",
                     liveUrl: "",
@@ -574,6 +550,21 @@ export default function ProjectsPage() {
                                 />
                             </div>
 
+                            {/* Sector */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Sector *</label>
+                                <select
+                                    value={formSector}
+                                    onChange={(e) => setFormSector(e.target.value)}
+                                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                    required
+                                >
+                                    <option value="HEALTHCARE">Healthcare</option>
+                                    <option value="AGRICULTURE">Agriculture</option>
+                                    <option value="URBAN">Urban</option>
+                                </select>
+                            </div>
+
                             {/* Description */}
                             <div>
                                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Description *</label>
@@ -589,19 +580,14 @@ export default function ProjectsPage() {
                             {/* Category */}
                             <div>
                                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Category *</label>
-                                <select
+                                <input
+                                    type="text"
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    placeholder="e.g., Web Development, Data Science, Mobile App"
                                     className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     required
-                                >
-                                    <option value="">Select a category</option>
-                                    {categories[formSector as keyof typeof categories]?.map((cat) => (
-                                        <option key={cat} value={cat}>
-                                            {cat.replace(/_/g, " ")}
-                                        </option>
-                                    ))}
-                                </select>
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -649,10 +635,9 @@ export default function ProjectsPage() {
                                 <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Team Size</label>
                                     <input
-                                        type="number"
-                                        min="1"
+                                        type="text"
                                         value={formData.teamSize}
-                                        onChange={(e) => setFormData({ ...formData, teamSize: parseInt(e.target.value) || 1 })}
+                                        onChange={(e) => setFormData({ ...formData, teamSize: e.target.value })}
                                         className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     />
                                 </div>
@@ -865,19 +850,14 @@ export default function ProjectsPage() {
                             {/* Category */}
                             <div>
                                 <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Category *</label>
-                                <select
+                                <input
+                                    type="text"
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    placeholder="e.g., Web Development, Data Science, Mobile App"
                                     className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     required
-                                >
-                                    <option value="">Select a category</option>
-                                    {categories[editingProject.sector as keyof typeof categories]?.map((cat) => (
-                                        <option key={cat} value={cat}>
-                                            {cat.replace(/_/g, " ")}
-                                        </option>
-                                    ))}
-                                </select>
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -919,10 +899,9 @@ export default function ProjectsPage() {
                                 <div>
                                     <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-200">Team Size</label>
                                     <input
-                                        type="number"
-                                        min="1"
+                                        type="text"
                                         value={formData.teamSize}
-                                        onChange={(e) => setFormData({ ...formData, teamSize: parseInt(e.target.value) || 1 })}
+                                        onChange={(e) => setFormData({ ...formData, teamSize: e.target.value })}
                                         className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     />
                                 </div>
