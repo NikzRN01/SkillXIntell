@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import prisma from '../config/database';
-import { Sector } from '@prisma/client';
 
 // Urban-specific skill categories
 const URBAN_CATEGORIES = [
@@ -21,7 +20,7 @@ export const getUrbanSkills = async (req: Request, res: Response) => {
         const skills = await prisma.skill.findMany({
             where: {
                 userId,
-                sector: Sector.URBAN,
+                sector: 'URBAN',
             },
             orderBy: {
                 createdAt: 'desc',
@@ -30,7 +29,7 @@ export const getUrbanSkills = async (req: Request, res: Response) => {
 
         res.json({
             success: true,
-            data: skills,
+            data: skills.map(s => ({ ...s, tags: s.tags ? JSON.parse(s.tags) : [] })),
             count: skills.length,
         });
     } catch (error) {
@@ -50,7 +49,7 @@ export const getUrbanCertifications = async (req: Request, res: Response) => {
         const certifications = await prisma.certification.findMany({
             where: {
                 userId,
-                sector: Sector.URBAN,
+                sector: 'URBAN',
             },
             orderBy: {
                 issueDate: 'desc',
@@ -59,7 +58,7 @@ export const getUrbanCertifications = async (req: Request, res: Response) => {
 
         res.json({
             success: true,
-            data: certifications,
+            data: certifications.map(c => ({ ...c, skills: c.skills ? JSON.parse(c.skills) : [] })),
             count: certifications.length,
         });
     } catch (error) {
@@ -79,7 +78,7 @@ export const getUrbanProjects = async (req: Request, res: Response) => {
         const projects = await prisma.project.findMany({
             where: {
                 userId,
-                sector: Sector.URBAN,
+                sector: 'URBAN',
             },
             orderBy: {
                 startDate: 'desc',
@@ -88,7 +87,13 @@ export const getUrbanProjects = async (req: Request, res: Response) => {
 
         res.json({
             success: true,
-            data: projects,
+            data: projects.map(p => ({
+                ...p,
+                skillsUsed: p.skillsUsed ? JSON.parse(p.skillsUsed) : [],
+                technologies: p.technologies ? JSON.parse(p.technologies) : [],
+                metrics: p.metrics ? JSON.parse(p.metrics) : null,
+                attachments: p.attachments ? JSON.parse(p.attachments) : null
+            })),
             count: projects.length,
         });
     } catch (error) {
@@ -106,15 +111,15 @@ export const getUrbanAssessment = async (req: Request, res: Response) => {
         const userId = (req as any).user?.userId;
 
         const skills = await prisma.skill.findMany({
-            where: { userId, sector: Sector.URBAN },
+            where: { userId, sector: 'URBAN' },
         });
 
         const certifications = await prisma.certification.findMany({
-            where: { userId, sector: Sector.URBAN },
+            where: { userId, sector: 'URBAN' },
         });
 
         const projects = await prisma.project.findMany({
-            where: { userId, sector: Sector.URBAN },
+            where: { userId, sector: 'URBAN' },
         });
 
         // Calculate transformation readiness score
@@ -154,7 +159,7 @@ export const getUrbanCareerPathways = async (req: Request, res: Response) => {
         const userId = (req as any).user?.userId;
 
         const skills = await prisma.skill.findMany({
-            where: { userId, sector: Sector.URBAN },
+            where: { userId, sector: 'URBAN' },
         });
 
         const pathways = [

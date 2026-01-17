@@ -1,7 +1,65 @@
 import { Request, Response } from 'express';
 import prisma from '../config/database';
-import { Sector } from '@prisma/client';
 
+// Type definitions for Prisma models
+interface Skill {
+    id: string;
+    userId: string;
+    name: string;
+    category: string;
+    sector: string;
+    proficiencyLevel: number;
+    verified: boolean;
+    verificationSource: string | null;
+    tags: string | null;
+    description: string | null;
+    yearsOfExperience: number | null;
+    lastUsed: Date | null;
+    endorsements: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+interface Certification {
+    id: string;
+    userId: string;
+    name: string;
+    issuingOrg: string;
+    sector: string;
+    credentialId: string | null;
+    credentialUrl: string | null;
+    issueDate: Date;
+    expiryDate: Date | null;
+    neverExpires: boolean;
+    skills: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+interface Project {
+    id: string;
+    userId: string;
+    title: string;
+    description: string;
+    sector: string;
+    category: string;
+    skillsUsed: string | null;
+    technologies: string | null;
+    outcomes: string;
+    impact: string | null;
+    metrics: string | null;
+    startDate: Date;
+    endDate: Date | null;
+    status: string;
+    teamSize: number | null;
+    role: string | null;
+    attachments: string | null;
+    repositoryUrl: string | null;
+    liveUrl: string | null;
+    isPublic: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
 // Agriculture-specific skill categories
 const AGRICULTURE_CATEGORIES = [
     'PRECISION_AGRICULTURE',
@@ -21,7 +79,7 @@ export const getAgricultureSkills = async (req: Request, res: Response) => {
         const skills = await prisma.skill.findMany({
             where: {
                 userId,
-                sector: Sector.AGRICULTURE,
+                sector: 'AGRICULTURE',
             },
             orderBy: {
                 createdAt: 'desc',
@@ -30,7 +88,7 @@ export const getAgricultureSkills = async (req: Request, res: Response) => {
 
         res.json({
             success: true,
-            data: skills,
+            data: skills.map((s: Skill) => ({ ...s, tags: s.tags ? JSON.parse(s.tags) : [] })),
             count: skills.length,
         });
     } catch (error) {
@@ -50,7 +108,7 @@ export const getAgricultureCertifications = async (req: Request, res: Response) 
         const certifications = await prisma.certification.findMany({
             where: {
                 userId,
-                sector: Sector.AGRICULTURE,
+                sector: 'AGRICULTURE',
             },
             orderBy: {
                 issueDate: 'desc',
@@ -59,7 +117,7 @@ export const getAgricultureCertifications = async (req: Request, res: Response) 
 
         res.json({
             success: true,
-            data: certifications,
+            data: certifications.map((c: Certification) => ({ ...c, skills: c.skills ? JSON.parse(c.skills) : [] })),
             count: certifications.length,
         });
     } catch (error) {
@@ -79,7 +137,7 @@ export const getAgricultureProjects = async (req: Request, res: Response) => {
         const projects = await prisma.project.findMany({
             where: {
                 userId,
-                sector: Sector.AGRICULTURE,
+                sector: 'AGRICULTURE',
             },
             orderBy: {
                 startDate: 'desc',
@@ -88,7 +146,13 @@ export const getAgricultureProjects = async (req: Request, res: Response) => {
 
         res.json({
             success: true,
-            data: projects,
+            data: projects.map((p: Project) => ({
+                ...p,
+                skillsUsed: p.skillsUsed ? JSON.parse(p.skillsUsed) : [],
+                technologies: p.technologies ? JSON.parse(p.technologies) : [],
+                metrics: p.metrics ? JSON.parse(p.metrics) : null,
+                attachments: p.attachments ? JSON.parse(p.attachments) : null
+            })),
             count: projects.length,
         });
     } catch (error) {
@@ -106,27 +170,27 @@ export const getAgricultureAssessment = async (req: Request, res: Response) => {
         const userId = (req as any).user?.userId;
 
         const skills = await prisma.skill.findMany({
-            where: { userId, sector: Sector.AGRICULTURE },
+            where: { userId, sector: 'AGRICULTURE' },
         });
 
         const certifications = await prisma.certification.findMany({
-            where: { userId, sector: Sector.AGRICULTURE },
+            where: { userId, sector: 'AGRICULTURE' },
         });
 
         const projects = await prisma.project.findMany({
-            where: { userId, sector: Sector.AGRICULTURE },
+            where: { userId, sector: 'AGRICULTURE' },
         });
 
         // Calculate innovation readiness score
         const totalSkills = skills.length;
         const avgProficiency = skills.length > 0
-            ? skills.reduce((sum, skill) => sum + skill.proficiencyLevel, 0) / skills.length
+            ? skills.reduce((sum: number, skill: Skill) => sum + skill.proficiencyLevel, 0) / skills.length
             : 0;
 
         const innovationScore = Math.min(100, Math.round(
             (avgProficiency / 5) * 40 + // 40% from skill proficiency
             Math.min(certifications.length * 15, 30) + // 30% from certifications
-            Math.min(projects.filter(p => p.status === 'COMPLETED').length * 6, 30) // 30% from projects
+            Math.min(projects.filter((p: Project) => p.status === 'COMPLETED').length * 6, 30) // 30% from projects
         ));
 
         res.json({
@@ -135,7 +199,7 @@ export const getAgricultureAssessment = async (req: Request, res: Response) => {
                 innovationScore,
                 totalSkills,
                 certifications: certifications.length,
-                completedProjects: projects.filter(p => p.status === 'COMPLETED').length,
+                completedProjects: projects.filter((p: Project) => p.status === 'COMPLETED').length,
                 averageProficiency: avgProficiency.toFixed(2),
             },
         });
@@ -154,7 +218,7 @@ export const getAgricultureCareerPathways = async (req: Request, res: Response) 
         const userId = (req as any).user?.userId;
 
         const skills = await prisma.skill.findMany({
-            where: { userId, sector: Sector.AGRICULTURE },
+            where: { userId, sector: 'AGRICULTURE' },
         });
 
         const pathways = [

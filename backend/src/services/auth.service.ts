@@ -1,4 +1,5 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 
+;
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import prisma from '../config/database';
@@ -9,6 +10,7 @@ export interface TokenPayload {
     userId: string;
     email: string;
     role: string;
+    supabaseUserId?: string; // Optional for backward compatibility
 }
 
 export interface RegisterData {
@@ -84,8 +86,8 @@ export async function createUserWithProfile(data: RegisterData) {
             role,
             profile: {
                 create: {
-                    interests: [],
-                    targetSectors: [],
+                    interests: "[]",
+                    targetSectors: "[]",
                 },
             },
         },
