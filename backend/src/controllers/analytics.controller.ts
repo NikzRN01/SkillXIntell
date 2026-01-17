@@ -30,7 +30,7 @@ export const generateSkillAnalytics = async (req: Request, res: Response) => {
         // Calculate scores
         const overallScore = calculateOverallScore(skills, certifications, projects);
         const careerReadiness = calculateCareerReadiness(skills, certifications, projects);
-        const industryAlignment = calculateIndustryAlignment(skills, sector as string);
+        const industryAlignment = calculateIndustryAlignment(skills, projects, sector as string);
 
         // Identify skill gaps
         const skillGaps = identifySkillGaps(skills, sector as string);
@@ -188,26 +188,30 @@ function calculateOverallScore(skills: any[], certifications: any[], projects: a
 function calculateCareerReadiness(skills: any[], certifications: any[], projects: any[]): number {
     const verifiedSkills = skills.filter(s => s.verified).length;
     const activeCerts = certifications.filter(c => !c.expiryDate || new Date(c.expiryDate) > new Date()).length;
-    const completedProjects = projects.filter(p => p.status === 'COMPLETED').length;
 
+    // Career Readiness is calculated based on skills and certifications only
     const readiness = Math.min(100, Math.round(
-        (verifiedSkills / Math.max(skills.length, 1)) * 35 +
-        Math.min(activeCerts * 15, 35) +
-        Math.min(completedProjects * 6, 30)
+        (verifiedSkills / Math.max(skills.length, 1)) * 50 + // 50% from verified skills
+        Math.min(activeCerts * 10, 50) // 50% from active certifications (max 5 certs)
     ));
 
     return readiness;
 }
 
-function calculateIndustryAlignment(skills: any[], sector: string): number {
-    // Simple alignment based on skill count and proficiency
+function calculateIndustryAlignment(skills: any[], projects: any[], sector: string): number {
+    // Industry Alignment is calculated based on skills and projects
     const avgProficiency = skills.length > 0
         ? skills.reduce((sum, s) => sum + s.proficiencyLevel, 0) / skills.length
         : 0;
 
+    const completedProjects = projects.filter(p => p.status === 'COMPLETED').length;
+    const publicProjects = projects.filter(p => p.isPublic).length;
+
     const alignment = Math.min(100, Math.round(
-        (skills.length / 10) * 50 + // Up to 10 skills = 50%
-        (avgProficiency / 5) * 50 // Proficiency = 50%
+        (skills.length / 10) * 30 + // Up to 10 skills = 30%
+        (avgProficiency / 5) * 30 + // Proficiency = 30%
+        Math.min(completedProjects * 8, 25) + // Completed projects = 25% (max ~3 projects)
+        Math.min(publicProjects * 5, 15) // Public projects = 15% (max 3 public projects)
     ));
 
     return alignment;

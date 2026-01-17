@@ -211,7 +211,7 @@ export default function AnalyticsDashboard() {
                 <div className="rounded-2xl border border-orange-200/70 bg-white/70 backdrop-blur-lg p-6 flex flex-col items-start shadow-lg relative overflow-hidden">
                     <div className="absolute -top-4 -right-4 w-16 h-16 bg-orange-100/60 rounded-full blur-2xl opacity-60" />
                     <div className="flex items-center justify-between w-full mb-2 z-10">
-                        <span className="text-sm text-orange-700 font-semibold">Avg Readiness</span>
+                        <span className="text-sm text-orange-700 font-semibold">Overall Score</span>
                         <Brain className="h-4 w-4 text-orange-500" />
                     </div>
                     <div className="text-3xl font-bold text-slate-900 z-10">{analytics?.overall.averageReadiness || 0}%</div>
@@ -220,65 +220,60 @@ export default function AnalyticsDashboard() {
                 <div className="rounded-2xl border border-orange-200/70 bg-white/70 backdrop-blur-lg p-6 flex flex-col items-start shadow-lg relative overflow-hidden">
                     <div className="absolute -top-4 -right-4 w-16 h-16 bg-orange-100/60 rounded-full blur-2xl opacity-60" />
                     <div className="flex items-center justify-between w-full mb-2 z-10">
-                        <span className="text-sm text-orange-700 font-semibold">Active Sectors</span>
+                        <span className="text-sm text-orange-700 font-semibold">Active Session</span>
                         <BarChart3 className="h-4 w-4 text-orange-500" />
                     </div>
-                    <div className="text-3xl font-bold text-slate-900 z-10">{analytics?.overall.sectorsActive || 0}</div>
-                    <p className="text-xs text-slate-500 mt-1 z-10">Of 3 total</p>
+                    <div className="text-3xl font-bold text-slate-900 z-10">{analytics?.overall.totalProjects || 0}</div>
+                    <p className="text-xs text-slate-500 mt-1 z-10">Active projects</p>
                 </div>
             </div>
 
             {/* Sector Comparison */}
             <div className="p-6 md:p-8 rounded-2xl border border-orange-200/60 bg-white/70 backdrop-blur-xl shadow-xl mb-8">
                 <h2 className="text-2xl font-bold mb-6 text-slate-900">Sector Performance Comparison</h2>
-                <div className="space-y-6">
+                <div className="space-y-8">
                     {/* Healthcare */}
-                    {analytics?.bySector.HEALTHCARE && (
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-healthcare"></div>
-                                    <span className="font-medium">Healthcare Informatics</span>
+                    {analytics?.bySector.HEALTHCARE && analytics.bySector.HEALTHCARE.overallScore > 0 && (
+                        <div className="border-l-4 border-healthcare pl-6">
+                            <div className="flex items-center justify-between mb-5">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-4 h-4 rounded-full bg-healthcare"></div>
+                                    <h3 className="font-semibold text-lg text-slate-900">Healthcare Informatics</h3>
                                 </div>
-                                <span className="text-sm text-muted-foreground">
-                                    {analytics.bySector.HEALTHCARE.overallScore}% Overall
-                                </span>
+                                <div className="bg-healthcare/10 rounded-lg px-4 py-2">
+                                    <div className="text-2xl font-bold text-healthcare">
+                                        {analytics.bySector.HEALTHCARE.overallScore}%
+                                    </div>
+                                    <p className="text-xs text-healthcare font-medium">Overall</p>
+                                </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Career Readiness</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-slate-50/80 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm font-medium text-slate-700">Career Readiness</span>
+                                        <span className="text-lg font-bold text-healthcare">
+                                            {analytics.bySector.HEALTHCARE.careerReadiness}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-healthcare"
+                                            className="h-full bg-blue-500"
                                             style={{ width: `${analytics.bySector.HEALTHCARE.careerReadiness}%` }}
                                         />
                                     </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.HEALTHCARE.careerReadiness}%
-                                    </div>
                                 </div>
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Industry Alignment</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="bg-slate-50/80 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm font-medium text-slate-700">Industry Alignment</span>
+                                        <span className="text-lg font-bold text-healthcare">
+                                            {analytics.bySector.HEALTHCARE.industryAlignment}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-healthcare"
+                                            className="h-full bg-blue-500"
                                             style={{ width: `${analytics.bySector.HEALTHCARE.industryAlignment}%` }}
                                         />
-                                    </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.HEALTHCARE.industryAlignment}%
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Overall Score</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-healthcare"
-                                            style={{ width: `${analytics.bySector.HEALTHCARE.overallScore}%` }}
-                                        />
-                                    </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.HEALTHCARE.overallScore}%
                                     </div>
                                 </div>
                             </div>
@@ -286,52 +281,47 @@ export default function AnalyticsDashboard() {
                     )}
 
                     {/* Agriculture */}
-                    {analytics?.bySector.AGRICULTURE && (
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-agriculture"></div>
-                                    <span className="font-medium">Agricultural Technology</span>
+                    {analytics?.bySector.AGRICULTURE && analytics.bySector.AGRICULTURE.overallScore > 0 && (
+                        <div className="border-l-4 border-agriculture pl-6">
+                            <div className="flex items-center justify-between mb-5">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-4 h-4 rounded-full bg-agriculture"></div>
+                                    <h3 className="font-semibold text-lg text-slate-900">Agricultural Technology</h3>
                                 </div>
-                                <span className="text-sm text-muted-foreground">
-                                    {analytics.bySector.AGRICULTURE.overallScore}% Overall
-                                </span>
+                                <div className="bg-agriculture/10 rounded-lg px-4 py-2">
+                                    <div className="text-2xl font-bold text-agriculture">
+                                        {analytics.bySector.AGRICULTURE.overallScore}%
+                                    </div>
+                                    <p className="text-xs text-agriculture font-medium">Overall</p>
+                                </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Career Readiness</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-slate-50/80 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm font-medium text-slate-700">Career Readiness</span>
+                                        <span className="text-lg font-bold text-agriculture">
+                                            {analytics.bySector.AGRICULTURE.careerReadiness}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-agriculture"
+                                            className="h-full bg-blue-500"
                                             style={{ width: `${analytics.bySector.AGRICULTURE.careerReadiness}%` }}
                                         />
                                     </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.AGRICULTURE.careerReadiness}%
-                                    </div>
                                 </div>
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Industry Alignment</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="bg-slate-50/80 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm font-medium text-slate-700">Industry Alignment</span>
+                                        <span className="text-lg font-bold text-agriculture">
+                                            {analytics.bySector.AGRICULTURE.industryAlignment}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-agriculture"
+                                            className="h-full bg-blue-500"
                                             style={{ width: `${analytics.bySector.AGRICULTURE.industryAlignment}%` }}
                                         />
-                                    </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.AGRICULTURE.industryAlignment}%
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Overall Score</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-agriculture"
-                                            style={{ width: `${analytics.bySector.AGRICULTURE.overallScore}%` }}
-                                        />
-                                    </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.AGRICULTURE.overallScore}%
                                     </div>
                                 </div>
                             </div>
@@ -339,52 +329,47 @@ export default function AnalyticsDashboard() {
                     )}
 
                     {/* Urban */}
-                    {analytics?.bySector.URBAN && (
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-urban"></div>
-                                    <span className="font-medium">Urban & Smart Cities</span>
+                    {analytics?.bySector.URBAN && analytics.bySector.URBAN.overallScore > 0 && (
+                        <div className="border-l-4 border-urban pl-6">
+                            <div className="flex items-center justify-between mb-5">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-4 h-4 rounded-full bg-urban"></div>
+                                    <h3 className="font-semibold text-lg text-slate-900">Urban & Smart Cities</h3>
                                 </div>
-                                <span className="text-sm text-muted-foreground">
-                                    {analytics.bySector.URBAN.overallScore}% Overall
-                                </span>
+                                <div className="bg-urban/10 rounded-lg px-4 py-2">
+                                    <div className="text-2xl font-bold text-urban">
+                                        {analytics.bySector.URBAN.overallScore}%
+                                    </div>
+                                    <p className="text-xs text-urban font-medium">Overall</p>
+                                </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Career Readiness</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-slate-50/80 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm font-medium text-slate-700">Career Readiness</span>
+                                        <span className="text-lg font-bold text-urban">
+                                            {analytics.bySector.URBAN.careerReadiness}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-urban"
+                                            className="h-full bg-blue-500"
                                             style={{ width: `${analytics.bySector.URBAN.careerReadiness}%` }}
                                         />
                                     </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.URBAN.careerReadiness}%
-                                    </div>
                                 </div>
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Industry Alignment</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="bg-slate-50/80 rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm font-medium text-slate-700">Industry Alignment</span>
+                                        <span className="text-lg font-bold text-urban">
+                                            {analytics.bySector.URBAN.industryAlignment}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-urban"
+                                            className="h-full bg-blue-500"
                                             style={{ width: `${analytics.bySector.URBAN.industryAlignment}%` }}
                                         />
-                                    </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.URBAN.industryAlignment}%
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Overall Score</div>
-                                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-urban"
-                                            style={{ width: `${analytics.bySector.URBAN.overallScore}%` }}
-                                        />
-                                    </div>
-                                    <div className="text-xs font-medium mt-1">
-                                        {analytics.bySector.URBAN.overallScore}%
                                     </div>
                                 </div>
                             </div>
