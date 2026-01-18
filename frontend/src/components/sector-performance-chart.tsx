@@ -1,6 +1,7 @@
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { LabelProps } from 'recharts';
 
 interface SectorData {
     sector: string;
@@ -78,19 +79,12 @@ const CustomLegend = ({ payload }: CustomLegendProps) => {
 };
 
 export function SectorPerformanceChart({ data, height = 450 }: SectorPerformanceChartProps) {
-    type YAxisLabelProps = {
-        viewBox?: {
-            x?: number;
-            y?: number;
-            height?: number;
-        };
-    };
-
     // Centered Y-axis label renderer
-    const renderYAxisLabel = ({ viewBox }: YAxisLabelProps) => {
-        const { x, y, height } = viewBox || {};
-        const cx = (x ?? 0) + 24; // nudge inside the chart for visibility
-        const cy = (y ?? 0) + (height ?? 0) / 2;
+    const renderYAxisLabel = ({ viewBox }: LabelProps) => {
+        if (!viewBox || typeof viewBox !== 'object') return null;
+        const { x = 0, y = 0, height = 0 } = viewBox as { x?: number; y?: number; height?: number; width?: number };
+        const cx = x + 24; // nudge inside the chart for visibility
+        const cy = y + height / 2;
         return (
             <text
                 x={cx}
