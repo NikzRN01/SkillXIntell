@@ -238,7 +238,7 @@ export default function HealthcareAssessmentPage() {
     const projectsCount = filteredData.filter((item) => item.type === "project").length;
 
     return (
-        <div className="space-y-6 bg-blue-50 min-h-screen p-4">
+        <div className="space-y-6 p-4">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">

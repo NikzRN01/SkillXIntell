@@ -231,7 +231,7 @@ export default function AgricultureAssessmentPage() {
     const projectsCount = filteredData.filter((item) => item.type === "project").length;
 
     return (
-        <div className="space-y-6 bg-green-50 min-h-screen p-4">
+        <div className="space-y-6 p-4">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -242,7 +242,7 @@ export default function AgricultureAssessmentPage() {
                         <ArrowLeft className="h-6 w-6 text-slate-600" />
                     </button>
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-xl">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center shadow-xl">
                             <TrendingUp className="h-6 w-6 text-white" />
                         </div>
                         <div>
