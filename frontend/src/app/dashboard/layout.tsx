@@ -82,55 +82,50 @@ export default function DashboardLayout({
                             <nav className="space-y-1">
                                 <Link
                                     href="/dashboard"
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
-                                        pathname === "/dashboard"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${pathname === "/dashboard"
                                             ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
                                             : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
-                                    }`}
+                                        }`}
                                 >
                                     <LayoutDashboard className={`h-5 w-5 ${pathname === "/dashboard" ? "text-blue-600" : "text-slate-600"}`} />
                                     <span>Dashboard</span>
                                 </Link>
                                 <Link
                                     href="/dashboard/skills"
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
-                                        pathname === "/dashboard/skills"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${pathname === "/dashboard/skills"
                                             ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
                                             : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
-                                    }`}
+                                        }`}
                                 >
                                     <Award className={`h-5 w-5 ${pathname === "/dashboard/skills" ? "text-blue-600" : "text-slate-600"}`} />
                                     <span>Skills</span>
                                 </Link>
                                 <Link
                                     href="/dashboard/certifications"
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
-                                        pathname === "/dashboard/certifications"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${pathname === "/dashboard/certifications"
                                             ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
                                             : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
-                                    }`}
+                                        }`}
                                 >
                                     <Briefcase className={`h-5 w-5 ${pathname === "/dashboard/certifications" ? "text-blue-600" : "text-slate-600"}`} />
                                     <span>Certifications</span>
                                 </Link>
                                 <Link
                                     href="/dashboard/projects"
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
-                                        pathname === "/dashboard/projects"
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${pathname === "/dashboard/projects"
                                             ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
                                             : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
-                                    }`}
+                                        }`}
                                 >
                                     <Target className={`h-5 w-5 ${pathname === "/dashboard/projects" ? "text-blue-600" : "text-slate-600"}`} />
                                     <span>Projects</span>
                                 </Link>
                                 <Link
                                     href="/dashboard/profile"
-                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
-                                        pathname === "/dashboard/profile" || pathname.startsWith("/dashboard/profile/")
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${pathname === "/dashboard/profile" || pathname.startsWith("/dashboard/profile/")
                                             ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
                                             : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
-                                    }`}
+                                        }`}
                                 >
                                     <User className={`h-5 w-5 ${pathname === "/dashboard/profile" || pathname.startsWith("/dashboard/profile/") ? "text-blue-600" : "text-slate-600"}`} />
                                     <span>Profile</span>
@@ -139,16 +134,14 @@ export default function DashboardLayout({
                                 {(user.role === "EDUCATOR" || user.role === "ADMIN") && (
                                     <Link
                                         href="/dashboard/verification"
-                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
-                                            pathname === "/dashboard/verification"
+                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${pathname === "/dashboard/verification"
                                                 ? "text-slate-900 bg-blue-50 border-l-4 border-l-blue-600"
                                                 : "text-slate-700 hover:bg-slate-50 border-l-4 border-l-transparent"
-                                        }`}
+                                            }`}
                                     >
                                         <ShieldCheck
-                                            className={`h-5 w-5 ${
-                                                pathname === "/dashboard/verification" ? "text-blue-600" : "text-slate-600"
-                                            }`}
+                                            className={`h-5 w-5 ${pathname === "/dashboard/verification" ? "text-blue-600" : "text-slate-600"
+                                                }`}
                                         />
                                         <span>Verification</span>
                                     </Link>
