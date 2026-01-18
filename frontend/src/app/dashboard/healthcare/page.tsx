@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Activity, Award, Briefcase, TrendingUp, Target, BarChart3, Calendar } from "lucide-react";
+import { Activity, Award, Briefcase, TrendingUp, Target, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import CourseCard from "@/components/course-card";
 
@@ -42,6 +42,7 @@ export default function HealthcareDashboard() {
     const [pathways, setPathways] = useState<CareerPathway[]>([]);
     const [loading, setLoading] = useState(true);
     const [timeRange, setTimeRange] = useState<7 | 14 | 30>(7);
+    const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
 
     const fetchHealthcareStats = useCallback(async () => {
         try {
@@ -161,8 +162,8 @@ export default function HealthcareDashboard() {
             <div className="p-6 md:p-8 rounded-2xl border border-slate-200/80 bg-white/80 shadow-xl backdrop-blur-xl">
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                            <BarChart3 className="h-5 w-5 text-blue-600" />
+                        <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
+                            <BarChart3 className="h-5 w-5 text-violet-600" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900">Progress Overview</h2>
                     </div>
@@ -172,8 +173,8 @@ export default function HealthcareDashboard() {
                                 key={days}
                                 onClick={() => setTimeRange(days as 7 | 14 | 30)}
                                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${timeRange === days
-                                        ? "bg-blue-600 text-white shadow-lg"
-                                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                                    ? "bg-violet-600 text-white shadow-lg"
+                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                                     }`}
                             >
                                 {days} Days
@@ -185,15 +186,15 @@ export default function HealthcareDashboard() {
                 {/* Chart Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Skills Progress */}
-                    <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+                    <div className="bg-gradient-to-br from-violet-50 to-white p-6 rounded-xl border border-violet-100">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-slate-900">Skills Progress</h3>
-                            <Target className="h-5 w-5 text-blue-600" />
+                            <Target className="h-5 w-5 text-violet-600" />
                         </div>
                         <div className="space-y-3">
                             <div className="flex justify-between items-end">
                                 <span className="text-sm text-slate-600">Total Skills</span>
-                                <span className="text-2xl font-bold text-blue-600">{stats?.totalSkills || 0}</span>
+                                <span className="text-2xl font-bold text-violet-600">{stats?.totalSkills || 0}</span>
                             </div>
                             <div className="relative h-48 border-l-2 border-b-2 border-slate-300 pl-4 pb-4">
                                 <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-slate-400">
@@ -230,15 +231,15 @@ export default function HealthcareDashboard() {
                     </div>
 
                     {/* Certifications Progress */}
-                    <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+                    <div className="bg-gradient-to-br from-violet-50 to-white p-6 rounded-xl border border-violet-100">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-slate-900">Certifications</h3>
-                            <Award className="h-5 w-5 text-blue-600" />
+                            <Award className="h-5 w-5 text-violet-600" />
                         </div>
                         <div className="space-y-3">
                             <div className="flex justify-between items-end">
                                 <span className="text-sm text-slate-600">Active</span>
-                                <span className="text-2xl font-bold text-blue-600">{stats?.activeCertifications || 0}</span>
+                                <span className="text-2xl font-bold text-violet-600">{stats?.activeCertifications || 0}</span>
                             </div>
                             <div className="relative h-48 border-l-2 border-b-2 border-slate-300 pl-4 pb-4">
                                 <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-slate-400">
@@ -255,7 +256,7 @@ export default function HealthcareDashboard() {
                                             <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
                                                 <div className="relative w-full">
                                                     <div
-                                                        className="w-full bg-blue-500 hover:bg-blue-600 rounded-t transition-all duration-500 shadow-md"
+                                                        className="w-full bg-violet-500 hover:bg-violet-600 rounded-t transition-all duration-500 shadow-md"
                                                         style={{ height: `${Math.max(height, 8)}px` }}
                                                     >
                                                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
@@ -275,15 +276,15 @@ export default function HealthcareDashboard() {
                     </div>
 
                     {/* Projects Progress */}
-                    <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+                    <div className="bg-gradient-to-br from-violet-50 to-white p-6 rounded-xl border border-violet-100">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-slate-900">Projects</h3>
-                            <Briefcase className="h-5 w-5 text-blue-600" />
+                            <Briefcase className="h-5 w-5 text-violet-600" />
                         </div>
                         <div className="space-y-3">
                             <div className="flex justify-between items-end">
                                 <span className="text-sm text-slate-600">Completed</span>
-                                <span className="text-2xl font-bold text-blue-600">{stats?.completedProjects || 0}</span>
+                                <span className="text-2xl font-bold text-violet-600">{stats?.completedProjects || 0}</span>
                             </div>
                             <div className="relative h-48 border-l-2 border-b-2 border-slate-300 pl-4 pb-4">
                                 <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-slate-400">
@@ -300,7 +301,7 @@ export default function HealthcareDashboard() {
                                             <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
                                                 <div className="relative w-full">
                                                     <div
-                                                        className="w-full bg-blue-500 hover:bg-blue-600 rounded-t transition-all duration-500 shadow-md"
+                                                        className="w-full bg-violet-500 hover:bg-violet-600 rounded-t transition-all duration-500 shadow-md"
                                                         style={{ height: `${Math.max(height, 8)}px` }}
                                                     >
                                                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
@@ -320,15 +321,15 @@ export default function HealthcareDashboard() {
                     </div>
 
                     {/* Competency Progress */}
-                    <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+                    <div className="bg-gradient-to-br from-violet-50 to-white p-6 rounded-xl border border-violet-100">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-slate-900">Competency Score</h3>
-                            <TrendingUp className="h-5 w-5 text-blue-600" />
+                            <TrendingUp className="h-5 w-5 text-violet-600" />
                         </div>
                         <div className="space-y-3">
                             <div className="flex justify-between items-end">
                                 <span className="text-sm text-slate-600">Current</span>
-                                <span className="text-2xl font-bold text-blue-600">{stats?.competencyScore || 0}%</span>
+                                <span className="text-2xl font-bold text-violet-600">{stats?.competencyScore || 0}%</span>
                             </div>
                             <div className="relative h-48 border-l-2 border-b-2 border-slate-300 pl-4 pb-4">
                                 <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-slate-400">
@@ -346,7 +347,7 @@ export default function HealthcareDashboard() {
                                             <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
                                                 <div className="relative w-full">
                                                     <div
-                                                        className="w-full bg-blue-500 hover:bg-blue-600 rounded-t transition-all duration-500 shadow-md"
+                                                        className="w-full bg-violet-500 hover:bg-violet-600 rounded-t transition-all duration-500 shadow-md"
                                                         style={{ height: `${Math.max(height, 8)}px` }}
                                                     >
                                                         <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
@@ -373,8 +374,8 @@ export default function HealthcareDashboard() {
                     title: "Total Skills",
                     value: stats?.totalSkills || 0,
                     hint: `${stats?.verifiedSkills || 0} verified`,
-                    icon: <Target className="h-5 w-5 text-blue-600" />,
-                    color: "blue",
+                    icon: <Target className="h-5 w-5 text-violet-600" />,
+                    color: "violet",
                 }, {
                     title: "Certifications",
                     value: stats?.activeCertifications || 0,
@@ -398,7 +399,7 @@ export default function HealthcareDashboard() {
                         key={card.title}
                         className="relative p-6 rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-lg shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                     >
-                        <div className="absolute inset-x-0 top-0 h-1" style={{ background: "linear-gradient(90deg, rgba(59,130,246,0.65), rgba(99,102,241,0.65))" }}></div>
+                        <div className="absolute inset-x-0 top-0 h-1" style={{ background: "linear-gradient(90deg, rgba(139,92,246,0.65), rgba(168,85,247,0.65))" }}></div>
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-sm text-slate-500 font-semibold">{card.title}</span>
                             <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shadow-inner">
@@ -415,10 +416,10 @@ export default function HealthcareDashboard() {
             <div className="grid md:grid-cols-3 gap-6">
                 {[{
                     href: "/dashboard/healthcare/skills",
-                    icon: <Target className="h-6 w-6 text-blue-600" />,
+                    icon: <Target className="h-6 w-6 text-violet-600" />,
                     title: "Skills Tracker",
                     copy: "Manage healthcare IT skills, proficiencies, and gaps.",
-                    accent: "blue",
+                    accent: "violet",
                 }, {
                     href: "/dashboard/healthcare/certifications",
                     icon: <Award className="h-6 w-6 text-indigo-600" />,
@@ -492,14 +493,14 @@ export default function HealthcareDashboard() {
                         </div>
                         <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                             <div
-                                className="h-full rounded-full bg-gradient-to-r from-blue-600 via-indigo-500 to-emerald-500 transition-all"
+                                className="h-full rounded-full bg-gradient-to-r from-violet-600 via-purple-500 to-pink-500 transition-all"
                                 style={{ width: `${stats?.competencyScore || 0}%` }}
                             />
                         </div>
                     </div>
                     <Link
                         href="/dashboard/healthcare/assessment"
-                        className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-800"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-violet-700 hover:text-violet-800"
                     >
                         View detailed assessment
                         <span className="translate-x-0 group-hover:translate-x-1 transition-transform">→</span>

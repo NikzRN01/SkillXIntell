@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { BarChart3, TrendingUp, Target, Award, Brain, RefreshCw, Activity, Sprout, Building2, Newspaper, Briefcase, Sparkles, MessageCircle } from "lucide-react";
 import Link from "next/link";
+import { SectorPerformanceChart } from "@/components/sector-performance-chart";
 
 interface SectorAnalytics {
     overallScore: number;
@@ -41,7 +42,7 @@ export default function AnalyticsDashboard() {
     const [healthcareRecs, setHealthcareRecs] = useState<Recommendation[]>([]);
     const [agricultureRecs, setAgricultureRecs] = useState<Recommendation[]>([]);
     const [urbanRecs, setUrbanRecs] = useState<Recommendation[]>([]);
-    const [loadingRecs, setLoadingRecs] = useState<{[key: string]: boolean}>({});
+    const [loadingRecs, setLoadingRecs] = useState<{ [key: string]: boolean }>({});
 
     const fetchAnalytics = useCallback(async () => {
         try {
@@ -114,7 +115,7 @@ export default function AnalyticsDashboard() {
 
     const fetchRecommendations = async (sector: string, score: number) => {
         if (score === 0) return [];
-        
+
         setLoadingRecs(prev => ({ ...prev, [sector]: true }));
         try {
             const token = localStorage.getItem("token");
@@ -286,152 +287,200 @@ export default function AnalyticsDashboard() {
             </div>
 
             {/* Sector Comparison */}
-            <div className="p-6 md:p-8 rounded-2xl border border-orange-200/60 bg-white/70 backdrop-blur-xl shadow-xl mb-8">
-                <h2 className="text-2xl font-bold mb-6 text-slate-900">Sector Performance Comparison</h2>
-                <div className="space-y-8">
-                    {/* Healthcare */}
-                    {analytics?.bySector.HEALTHCARE && analytics.bySector.HEALTHCARE.overallScore > 0 && (
-                        <div className="border-l-4 border-healthcare pl-6">
-                            <div className="flex items-center justify-between mb-5">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-4 h-4 rounded-full bg-healthcare"></div>
-                                    <h3 className="font-semibold text-lg text-slate-900">Healthcare Informatics</h3>
-                                </div>
-                                <div className="bg-healthcare/10 rounded-lg px-4 py-2">
-                                    <div className="text-2xl font-bold text-healthcare">
-                                        {analytics.bySector.HEALTHCARE.overallScore}%
-                                    </div>
-                                    <p className="text-xs text-healthcare font-medium">Overall</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="bg-slate-50/80 rounded-xl p-4">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm font-medium text-slate-700">Career Readiness</span>
-                                        <span className="text-lg font-bold text-healthcare">
-                                            {analytics.bySector.HEALTHCARE.careerReadiness}%
-                                        </span>
-                                    </div>
-                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-500"
-                                            style={{ width: `${analytics.bySector.HEALTHCARE.careerReadiness}%` }}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="bg-slate-50/80 rounded-xl p-4">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm font-medium text-slate-700">Industry Alignment</span>
-                                        <span className="text-lg font-bold text-healthcare">
-                                            {analytics.bySector.HEALTHCARE.industryAlignment}%
-                                        </span>
-                                    </div>
-                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-500"
-                                            style={{ width: `${analytics.bySector.HEALTHCARE.industryAlignment}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+            <div className="p-4 md:p-6 rounded-2xl border border-orange-200/60 bg-gradient-to-br from-white via-orange-50/30 to-white backdrop-blur-xl shadow-xl mb-6">
+                <div className="mb-4">
+                    <h2 className="text-xl md:text-2xl font-bold mb-1 text-slate-900">Sector Performance Comparison</h2>
+                    <p className="text-slate-600 text-xs">Visualize your progress across different sectors with detailed metrics</p>
+                </div>
 
-                    {/* Agriculture */}
-                    {analytics?.bySector.AGRICULTURE && analytics.bySector.AGRICULTURE.overallScore > 0 && (
-                        <div className="border-l-4 border-agriculture pl-6">
-                            <div className="flex items-center justify-between mb-5">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-4 h-4 rounded-full bg-agriculture"></div>
-                                    <h3 className="font-semibold text-lg text-slate-900">Agricultural Technology</h3>
-                                </div>
-                                <div className="bg-agriculture/10 rounded-lg px-4 py-2">
-                                    <div className="text-2xl font-bold text-agriculture">
-                                        {analytics.bySector.AGRICULTURE.overallScore}%
-                                    </div>
-                                    <p className="text-xs text-agriculture font-medium">Overall</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="bg-slate-50/80 rounded-xl p-4">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm font-medium text-slate-700">Career Readiness</span>
-                                        <span className="text-lg font-bold text-agriculture">
-                                            {analytics.bySector.AGRICULTURE.careerReadiness}%
-                                        </span>
-                                    </div>
-                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-500"
-                                            style={{ width: `${analytics.bySector.AGRICULTURE.careerReadiness}%` }}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="bg-slate-50/80 rounded-xl p-4">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm font-medium text-slate-700">Industry Alignment</span>
-                                        <span className="text-lg font-bold text-agriculture">
-                                            {analytics.bySector.AGRICULTURE.industryAlignment}%
-                                        </span>
-                                    </div>
-                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-500"
-                                            style={{ width: `${analytics.bySector.AGRICULTURE.industryAlignment}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                {/* Bar Chart */}
+                {analytics && (
+                    <div className="mb-4">
+                        <SectorPerformanceChart
+                            data={[
+                                {
+                                    sector: "Healthcare Informatics",
+                                    careerReadiness: analytics.bySector.HEALTHCARE?.careerReadiness || 0,
+                                    industryAlignment: analytics.bySector.HEALTHCARE?.industryAlignment || 0,
+                                    overall: analytics.bySector.HEALTHCARE?.overallScore || 0
+                                },
+                                {
+                                    sector: "Agricultural Technology",
+                                    careerReadiness: analytics.bySector.AGRICULTURE?.careerReadiness || 0,
+                                    industryAlignment: analytics.bySector.AGRICULTURE?.industryAlignment || 0,
+                                    overall: analytics.bySector.AGRICULTURE?.overallScore || 0
+                                },
+                                {
+                                    sector: "Urban & Smart Cities",
+                                    careerReadiness: analytics.bySector.URBAN?.careerReadiness || 0,
+                                    industryAlignment: analytics.bySector.URBAN?.industryAlignment || 0,
+                                    overall: analytics.bySector.URBAN?.overallScore || 0
+                                }
+                            ].filter(item => item.overall > 0 || item.careerReadiness > 0 || item.industryAlignment > 0)}
+                            height={350}
+                        />
+                    </div>
+                )}
 
-                    {/* Urban */}
-                    {analytics?.bySector.URBAN && analytics.bySector.URBAN.overallScore > 0 && (
-                        <div className="border-l-4 border-urban pl-6">
-                            <div className="flex items-center justify-between mb-5">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-4 h-4 rounded-full bg-urban"></div>
-                                    <h3 className="font-semibold text-lg text-slate-900">Urban & Smart Cities</h3>
-                                </div>
-                                <div className="bg-urban/10 rounded-lg px-4 py-2">
-                                    <div className="text-2xl font-bold text-urban">
-                                        {analytics.bySector.URBAN.overallScore}%
+                <div className="mt-4 pt-4 border-t border-orange-200/40">
+                    <h3 className="text-base font-bold text-slate-900 mb-3">Detailed Sector Analysis</h3>
+                    <div className="space-y-3">
+                        {/* Healthcare */}
+                        {analytics?.bySector.HEALTHCARE && analytics.bySector.HEALTHCARE.overallScore > 0 && (
+                            <div className="rounded-lg border border-orange-200/60 bg-gradient-to-br from-orange-50/50 to-white p-4 hover:shadow-md transition-shadow">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-sm">
+                                            🏥
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-sm text-slate-900">Healthcare Informatics</h3>
+                                            <p className="text-xs text-slate-600">Medical sector readiness</p>
+                                        </div>
                                     </div>
-                                    <p className="text-xs text-urban font-medium">Overall</p>
+                                    <div className="text-right">
+                                        <div className="text-2xl font-black text-orange-600">
+                                            {analytics.bySector.HEALTHCARE.overallScore}%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="bg-white rounded-lg p-3 border border-orange-100/40">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-xs font-semibold text-slate-700">Career Readiness</span>
+                                            <span className="text-sm font-bold text-orange-600">
+                                                {analytics.bySector.HEALTHCARE.careerReadiness}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-orange-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-500"
+                                                style={{ width: `${analytics.bySector.HEALTHCARE.careerReadiness}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-3 border border-orange-100/40">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-xs font-semibold text-slate-700">Industry Alignment</span>
+                                            <span className="text-sm font-bold text-orange-600">
+                                                {analytics.bySector.HEALTHCARE.industryAlignment}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-orange-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-500"
+                                                style={{ width: `${analytics.bySector.HEALTHCARE.industryAlignment}%` }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="bg-slate-50/80 rounded-xl p-4">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm font-medium text-slate-700">Career Readiness</span>
-                                        <span className="text-lg font-bold text-urban">
-                                            {analytics.bySector.URBAN.careerReadiness}%
-                                        </span>
+                        )}
+
+                        {/* Agriculture */}
+                        {analytics?.bySector.AGRICULTURE && analytics.bySector.AGRICULTURE.overallScore > 0 && (
+                            <div className="rounded-lg border border-orange-200/60 bg-gradient-to-br from-orange-50/50 to-white p-4 hover:shadow-md transition-shadow">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-sm">
+                                            🌾
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-sm text-slate-900">Agricultural Technology</h3>
+                                            <p className="text-xs text-slate-600">Agri-tech sector readiness</p>
+                                        </div>
                                     </div>
-                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-500"
-                                            style={{ width: `${analytics.bySector.URBAN.careerReadiness}%` }}
-                                        />
+                                    <div className="text-right">
+                                        <div className="text-2xl font-black text-orange-600">
+                                            {analytics.bySector.AGRICULTURE.overallScore}%
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="bg-slate-50/80 rounded-xl p-4">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm font-medium text-slate-700">Industry Alignment</span>
-                                        <span className="text-lg font-bold text-urban">
-                                            {analytics.bySector.URBAN.industryAlignment}%
-                                        </span>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="bg-white rounded-lg p-3 border border-orange-100/40">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-xs font-semibold text-slate-700">Career Readiness</span>
+                                            <span className="text-sm font-bold text-orange-600">
+                                                {analytics.bySector.AGRICULTURE.careerReadiness}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-orange-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-500"
+                                                style={{ width: `${analytics.bySector.AGRICULTURE.careerReadiness}%` }}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-500"
-                                            style={{ width: `${analytics.bySector.URBAN.industryAlignment}%` }}
-                                        />
+                                    <div className="bg-white rounded-lg p-3 border border-orange-100/40">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-xs font-semibold text-slate-700">Industry Alignment</span>
+                                            <span className="text-sm font-bold text-orange-600">
+                                                {analytics.bySector.AGRICULTURE.industryAlignment}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-orange-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-500"
+                                                style={{ width: `${analytics.bySector.AGRICULTURE.industryAlignment}%` }}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {/* Urban */}
+                        {analytics?.bySector.URBAN && analytics.bySector.URBAN.overallScore > 0 && (
+                            <div className="rounded-lg border border-orange-200/60 bg-gradient-to-br from-orange-50/50 to-white p-4 hover:shadow-md transition-shadow">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-sm">
+                                            🏙️
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-sm text-slate-900">Urban & Smart Cities</h3>
+                                            <p className="text-xs text-slate-600">Urban development readiness</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-2xl font-black text-orange-600">
+                                            {analytics.bySector.URBAN.overallScore}%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="bg-white rounded-lg p-4 border border-orange-100/40">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <span className="text-sm font-semibold text-slate-700">Career Readiness</span>
+                                            <span className="text-lg font-bold text-orange-600">
+                                                {analytics.bySector.URBAN.careerReadiness}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-2 bg-orange-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-500"
+                                                style={{ width: `${analytics.bySector.URBAN.careerReadiness}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-4 border border-orange-100/40">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <span className="text-sm font-semibold text-slate-700">Industry Alignment</span>
+                                            <span className="text-lg font-bold text-orange-600">
+                                                {analytics.bySector.URBAN.industryAlignment}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-2 bg-orange-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-500"
+                                                style={{ width: `${analytics.bySector.URBAN.industryAlignment}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -447,22 +496,103 @@ export default function AnalyticsDashboard() {
                         <span className="text-sm font-medium hidden md:inline">AI Assistant</span>
                     </Link>
                 </div>
-                
+
                 <div className="space-y-6">
-                {/* Healthcare Recommendations */}
-                {analytics?.bySector.HEALTHCARE && analytics.bySector.HEALTHCARE.overallScore > 0 && (
-                    <div className="p-6 rounded-xl border border-blue-200/60 bg-white/50 shadow-sm">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                                    <Activity className="h-5 w-5 text-blue-600" />
-                                </div>
-                                <div>
-                                    <h2 className="text-2xl font-bold text-slate-900">Healthcare Informatics</h2>
-                                    <p className="text-sm text-slate-600">Competency Score: {analytics.bySector.HEALTHCARE.overallScore}%</p>
+                    {/* Healthcare Recommendations */}
+                    {analytics?.bySector.HEALTHCARE && analytics.bySector.HEALTHCARE.overallScore > 0 && (
+                        <div className="p-6 rounded-xl border border-blue-200/60 bg-white/50 shadow-sm">
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                                        <Activity className="h-5 w-5 text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-2xl font-bold text-slate-900">Healthcare Informatics</h2>
+                                        <p className="text-sm text-slate-600">Competency Score: {analytics.bySector.HEALTHCARE.overallScore}%</p>
+                                    </div>
                                 </div>
                             </div>
+
+                            {loadingRecs.HEALTHCARE ? (
+                                <div className="flex items-center justify-center py-12">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                                </div>
+                            ) : healthcareRecs.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <Sparkles className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                                    <p className="text-slate-600 text-lg font-medium">Fetching AI recommendations...</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    {(() => {
+                                        const news = healthcareRecs.filter(r => r.type === "news").slice(0, 3);
+                                        const opportunities = healthcareRecs.filter(r => r.type === "opportunity").slice(0, 3);
+                                        const total = Math.min(news.length + opportunities.length, 5);
+
+                                        return (
+                                            <>
+                                                {news.length > 0 && (
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Newspaper className="h-5 w-5 text-blue-600" />
+                                                            <h3 className="text-sm font-bold text-slate-700">Industry News & Trends</h3>
+                                                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{news.length}</span>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            {news.map((rec, index) => (
+                                                                <div key={index} className="p-4 rounded-xl border border-blue-100 bg-blue-50/50 shadow-sm hover:shadow-md transition-shadow">
+                                                                    <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                                    <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                                    {rec.source && (
+                                                                        <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                                    )}
+                                                                    {rec.url && (
+                                                                        <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                                            Learn more →
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {opportunities.length > 0 && (
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Briefcase className="h-5 w-5 text-blue-600" />
+                                                            <h3 className="text-sm font-bold text-slate-700">Career Opportunities</h3>
+                                                            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{opportunities.length}</span>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            {opportunities.map((rec, index) => (
+                                                                <div key={index} className="p-4 rounded-xl border border-blue-200 bg-white/80 shadow-sm hover:shadow-md transition-shadow">
+                                                                    <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                                    <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                                    {rec.source && (
+                                                                        <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                                    )}
+                                                                    {rec.url && (
+                                                                        <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                                            Learn more →
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
+                                                    Showing {total} of {Math.min(healthcareRecs.length, 5)} recommendations
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                            )}
                         </div>
+                    )}
 
                         {loadingRecs.HEALTHCARE ? (
                             <div className="flex items-center justify-center py-12">
@@ -554,7 +684,87 @@ export default function AnalyticsDashboard() {
                                     <p className="text-sm text-slate-600">Innovation Score: {analytics.bySector.AGRICULTURE.overallScore}%</p>
                                 </div>
                             </div>
+
+                            {loadingRecs.AGRICULTURE ? (
+                                <div className="flex items-center justify-center py-12">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                                </div>
+                            ) : agricultureRecs.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <Sparkles className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                                    <p className="text-slate-600 text-lg font-medium">Fetching AI recommendations...</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    {(() => {
+                                        const news = agricultureRecs.filter(r => r.type === "news").slice(0, 3);
+                                        const opportunities = agricultureRecs.filter(r => r.type === "opportunity").slice(0, 3);
+                                        const total = Math.min(news.length + opportunities.length, 5);
+
+                                        return (
+                                            <>
+                                                {news.length > 0 && (
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Newspaper className="h-5 w-5 text-green-600" />
+                                                            <h3 className="text-sm font-bold text-slate-700">Industry News & Trends</h3>
+                                                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">{news.length}</span>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            {news.map((rec, index) => (
+                                                                <div key={index} className="p-4 rounded-xl border border-green-100 bg-green-50/50 shadow-sm hover:shadow-md transition-shadow">
+                                                                    <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                                    <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                                    {rec.source && (
+                                                                        <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                                    )}
+                                                                    {rec.url && (
+                                                                        <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline mt-2 inline-block">
+                                                                            Learn more →
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {opportunities.length > 0 && (
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Briefcase className="h-5 w-5 text-green-600" />
+                                                            <h3 className="text-sm font-bold text-slate-700">Career Opportunities</h3>
+                                                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">{opportunities.length}</span>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            {opportunities.map((rec, index) => (
+                                                                <div key={index} className="p-4 rounded-xl border border-green-200 bg-white/80 shadow-sm hover:shadow-md transition-shadow">
+                                                                    <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                                    <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                                    {rec.source && (
+                                                                        <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                                    )}
+                                                                    {rec.url && (
+                                                                        <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:underline mt-2 inline-block">
+                                                                            Learn more →
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
+                                                    Showing {total} of {Math.min(agricultureRecs.length, 5)} recommendations
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                            )}
                         </div>
+                    )}
 
                         {loadingRecs.AGRICULTURE ? (
                             <div className="flex items-center justify-center py-12">
@@ -646,6 +856,85 @@ export default function AnalyticsDashboard() {
                                     <p className="text-sm text-slate-600">Readiness Score: {analytics.bySector.URBAN.overallScore}%</p>
                                 </div>
                             </div>
+
+                            {loadingRecs.URBAN ? (
+                                <div className="flex items-center justify-center py-12">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600"></div>
+                                </div>
+                            ) : urbanRecs.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <Sparkles className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                                    <p className="text-slate-600 text-lg font-medium">Fetching AI recommendations...</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    {(() => {
+                                        const news = urbanRecs.filter(r => r.type === "news").slice(0, 3);
+                                        const opportunities = urbanRecs.filter(r => r.type === "opportunity").slice(0, 3);
+                                        const total = Math.min(news.length + opportunities.length, 5);
+
+                                        return (
+                                            <>
+                                                {news.length > 0 && (
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Newspaper className="h-5 w-5 text-cyan-600" />
+                                                            <h3 className="text-sm font-bold text-slate-700">Industry News & Trends</h3>
+                                                            <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">{news.length}</span>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            {news.map((rec, index) => (
+                                                                <div key={index} className="p-4 rounded-xl border border-cyan-100 bg-cyan-50/50 shadow-sm hover:shadow-md transition-shadow">
+                                                                    <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                                    <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                                    {rec.source && (
+                                                                        <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                                    )}
+                                                                    {rec.url && (
+                                                                        <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-600 hover:underline mt-2 inline-block">
+                                                                            Learn more →
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {opportunities.length > 0 && (
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Briefcase className="h-5 w-5 text-cyan-600" />
+                                                            <h3 className="text-sm font-bold text-slate-700">Career Opportunities</h3>
+                                                            <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">{opportunities.length}</span>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            {opportunities.map((rec, index) => (
+                                                                <div key={index} className="p-4 rounded-xl border border-cyan-200 bg-white/80 shadow-sm hover:shadow-md transition-shadow">
+                                                                    <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                                    <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                                    {rec.source && (
+                                                                        <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                                    )}
+                                                                    {rec.url && (
+                                                                        <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-600 hover:underline mt-2 inline-block">
+                                                                            Learn more →
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
+                                                    Showing {total} of {Math.min(urbanRecs.length, 5)} recommendations
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                            )}
                         </div>
 
                         {loadingRecs.URBAN ? (
