@@ -310,11 +310,11 @@ export default function UrbanCertificationsPage() {
 
                             <div className="mb-4">
                                 {cert.neverExpires ? (
-                                    <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs rounded-xl font-semibold border border-green-300">Never Expires</span>
+                                    <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs rounded-xl font-semibold border border-green-300 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700">Never Expires</span>
                                 ) : isExpired(cert.expiryDate) ? (
-                                    <span className="inline-block px-3 py-1 bg-red-100 text-red-700 text-xs rounded-xl font-semibold border border-red-300">Expired</span>
+                                    <span className="inline-block px-3 py-1 bg-red-100 text-red-800 text-xs rounded-xl font-semibold border border-red-300 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700">Expired</span>
                                 ) : (
-                                    <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs rounded-xl font-semibold border border-green-300">Active</span>
+                                    <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs rounded-xl font-semibold border border-green-300 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700">Active</span>
                                 )}
                             </div>
 
@@ -390,7 +390,7 @@ export default function UrbanCertificationsPage() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <input type="checkbox" id="neverExpires" checked={formData.neverExpires} onChange={(e) => setFormData({ ...formData, neverExpires: e.target.checked })} className="h-4 w-4 rounded border-gray-300" />
+                                <input type="checkbox" id="neverExpires" checked={formData.neverExpires} onChange={(e) => setFormData({ ...formData, neverExpires: e.target.checked })} className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary" />
                                 <label htmlFor="neverExpires" className="text-sm font-medium text-gray-900 dark:text-gray-200">This certification never expires</label>
                             </div>
 
