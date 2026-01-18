@@ -523,27 +523,6 @@ MIT License - see [LICENSE](./LICENSE) file for details
 
 ---
 
-## 🚀 Roadmap
-
-### Short Term (Next Release)
-- [ ] Advanced analytics with more sector-specific metrics
-- [ ] Enhanced mentor matching algorithm
-- [ ] Email notifications for important events
-- [ ] Two-factor authentication (2FA)
-
-### Medium Term
-- [ ] Mobile app (React Native)
-- [ ] Video tutorials for skill learning
-- [ ] Integration with LinkedIn for credential verification
-- [ ] Gamification system (badges, leaderboards)
-
-### Long Term
-- [ ] Machine learning for personalized recommendations
-- [ ] Employer integration for job matching
-- [ ] Government certification tracking
-- [ ] International expansion with multi-language support
-
----
 
 **Built for better education and career outcomes in emerging sectors** 🚀
               
