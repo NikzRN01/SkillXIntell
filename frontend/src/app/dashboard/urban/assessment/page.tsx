@@ -299,62 +299,62 @@ export default function UrbanAssessmentPage() {
             </div>
 
             {/* Content */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6">
+            <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-cyan-200 p-6">
                 {loading ? (
                     <div className="flex items-center justify-center h-64">
                         <div className="text-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600 mx-auto mb-4"></div>
-                            <p className="text-slate-600 dark:text-slate-400">Loading assessment data...</p>
+                            <p className="text-slate-600">Loading assessment data...</p>
                         </div>
                     </div>
                 ) : filteredData.length === 0 ? (
-                    <div className="text-center py-16">
+                    <div className="flex flex-col flex-grow min-h-[300px] justify-center items-center text-center py-16 w-full h-full">
                         <TrendingUp className="h-16 w-16 text-slate-400 mx-auto mb-4 opacity-50" />
-                        <p className="text-slate-600 dark:text-slate-400 text-lg font-medium">No items found</p>
-                        <p className="text-slate-500 dark:text-slate-500 text-sm mt-2">Try adjusting your search or filter criteria</p>
+                        <p className="text-slate-600 text-lg font-medium">No items found</p>
+                        <p className="text-slate-500 text-sm mt-2">Try adjusting your search or filter criteria</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
                         {filteredData.map((item, index) => (
                             <div
                                 key={`${item.type}-${item.name}-${index}`}
-                                className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700"
+                                className="bg-white/60 backdrop-blur-md rounded-2xl p-5 hover:bg-cyan-100 transition-colors border border-cyan-200 shadow-lg"
                             >
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-2">
                                             <span
                                                 className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${item.type === "skill"
-                                                        ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                                                        ? "bg-cyan-100 text-cyan-700"
                                                         : item.type === "project"
-                                                            ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"
-                                                            : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                                                            ? "bg-cyan-200 text-cyan-800"
+                                                            : "bg-cyan-50 text-cyan-600"
                                                     }`}
                                             >
                                                 {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                                             </span>
                                         </div>
-                                        <h3 className="font-semibold text-lg text-slate-900 dark:text-white">{item.name}</h3>
+                                        <h3 className="font-semibold text-lg text-slate-900">{item.name}</h3>
                                         {item.category && (
-                                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                            <p className="text-sm text-slate-500 mt-1">
                                                 {item.category.replace(/_/g, " ")}
                                             </p>
                                         )}
                                     </div>
                                     <div className="text-right ml-4">
-                                        <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400">
+                                        <p className="text-3xl font-bold text-cyan-600">
                                             {item.percentage}%
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                <div className="w-full bg-cyan-100 rounded-full h-2.5 overflow-hidden">
                                     <div
                                         className={`h-full transition-all ${item.type === "skill"
-                                                ? "bg-gradient-to-r from-green-500 to-green-600"
+                                                ? "bg-gradient-to-r from-cyan-500 to-cyan-600"
                                                 : item.type === "project"
-                                                    ? "bg-gradient-to-r from-purple-500 to-purple-600"
-                                                    : "bg-gradient-to-r from-blue-500 to-blue-600"
+                                                    ? "bg-gradient-to-r from-cyan-400 to-cyan-600"
+                                                    : "bg-gradient-to-r from-cyan-300 to-cyan-500"
                                             }`}
                                         style={{ width: `${Math.min(item.percentage, 100)}%` }}
                                     ></div>

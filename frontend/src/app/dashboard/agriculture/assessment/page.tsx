@@ -129,6 +129,7 @@ export default function AgricultureAssessmentPage() {
             try {
                 const projectRes = await fetch(
                     `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/${sector.toLowerCase()}/projects`,
+                    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/${sector.toLowerCase()}/projects`,
                     { method: "GET", headers }
                 );
 
@@ -231,6 +232,7 @@ export default function AgricultureAssessmentPage() {
     const projectsCount = filteredData.filter((item) => item.type === "project").length;
 
     return (
+        <div className="space-y-6 p-4">
         <div className="space-y-6 bg-green-50 min-h-screen p-4">
             {/* Header */}
             <div className="flex items-center justify-between">
@@ -238,14 +240,19 @@ export default function AgricultureAssessmentPage() {
                     <button
                         onClick={() => router.back()}
                         className="p-2 hover:bg-green-100 rounded-2xl transition-colors"
+                        className="p-2 hover:bg-green-100 rounded-2xl transition-colors"
                     >
+                        <ArrowLeft className="h-6 w-6 text-slate-600" />
                         <ArrowLeft className="h-6 w-6 text-slate-600" />
                     </button>
                     <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center shadow-xl">
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-xl">
                             <TrendingUp className="h-6 w-6 text-white" />
                         </div>
                         <div>
+                            <h1 className="text-3xl font-bold text-slate-900">Agriculture Assessment</h1>
+                            <p className="text-sm text-slate-600">Your comprehensive skill & project breakdown</p>
                             <h1 className="text-3xl font-bold text-slate-900">Agriculture Assessment</h1>
                             <p className="text-sm text-slate-600">Your comprehensive skill & project breakdown</p>
                         </div>
@@ -255,13 +262,16 @@ export default function AgricultureAssessmentPage() {
 
             {/* Filters */}
             <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-green-200 p-6 space-y-4">
+            <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-green-200 p-6 space-y-4">
                 <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-400" />
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-400" />
                     <input
                         type="text"
                         placeholder="Search skills, projects, or categories..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 bg-white/60 backdrop-blur-md border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-400 text-slate-900 shadow-md"
                         className="w-full pl-10 pr-4 py-3 bg-white/60 backdrop-blur-md border border-green-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-400 text-slate-900 shadow-md"
                     />
                 </div>
@@ -272,7 +282,9 @@ export default function AgricultureAssessmentPage() {
                             key={type}
                             onClick={() => setFilter(type as typeof filter)}
                             className={`px-4 py-2 rounded-2xl font-medium transition-all ${filter === type
+                            className={`px-4 py-2 rounded-2xl font-medium transition-all ${filter === type
                                     ? "bg-green-600 text-white shadow-lg"
+                                    : "bg-green-100 text-slate-700 hover:bg-green-200"
                                     : "bg-green-100 text-slate-700 hover:bg-green-200"
                                 }`}
                         >
@@ -285,11 +297,20 @@ export default function AgricultureAssessmentPage() {
                     <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 border border-green-200 shadow-lg">
                         <p className="text-sm text-slate-700 mb-1">Total Items</p>
                         <p className="text-3xl font-bold text-green-700">{filteredData.length}</p>
+                    <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 border border-green-200 shadow-lg">
+                        <p className="text-sm text-slate-700 mb-1">Total Items</p>
+                        <p className="text-3xl font-bold text-green-700">{filteredData.length}</p>
                     </div>
                     <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 border border-green-200 shadow-lg">
                         <p className="text-sm text-slate-700 mb-1">Skills</p>
                         <p className="text-3xl font-bold text-green-600">{skillsCount}</p>
+                    <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 border border-green-200 shadow-lg">
+                        <p className="text-sm text-slate-700 mb-1">Skills</p>
+                        <p className="text-3xl font-bold text-green-600">{skillsCount}</p>
                     </div>
+                    <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 border border-green-200 shadow-lg">
+                        <p className="text-sm text-slate-700 mb-1">Projects</p>
+                        <p className="text-3xl font-bold text-green-600">{projectsCount}</p>
                     <div className="bg-white/60 backdrop-blur-md rounded-2xl p-5 border border-green-200 shadow-lg">
                         <p className="text-sm text-slate-700 mb-1">Projects</p>
                         <p className="text-3xl font-bold text-green-600">{projectsCount}</p>
@@ -298,6 +319,7 @@ export default function AgricultureAssessmentPage() {
             </div>
 
             {/* Content */}
+            <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-green-200 p-6">
             <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-green-200 p-6">
                 {loading ? (
                     <div className="flex items-center justify-center h-64">
@@ -308,7 +330,10 @@ export default function AgricultureAssessmentPage() {
                     </div>
                 ) : filteredData.length === 0 ? (
                     <div className="flex flex-col flex-grow min-h-[300px] justify-center items-center text-center py-16 w-full h-full">
+                    <div className="flex flex-col flex-grow min-h-[300px] justify-center items-center text-center py-16 w-full h-full">
                         <TrendingUp className="h-16 w-16 text-slate-400 mx-auto mb-4 opacity-50" />
+                        <p className="text-slate-600 text-lg font-medium">No items found</p>
+                        <p className="text-slate-500 text-sm mt-2">Try adjusting your search or filter criteria</p>
                         <p className="text-slate-600 text-lg font-medium">No items found</p>
                         <p className="text-slate-500 text-sm mt-2">Try adjusting your search or filter criteria</p>
                     </div>
@@ -318,6 +343,7 @@ export default function AgricultureAssessmentPage() {
                             <div
                                 key={`${item.type}-${item.name}-${index}`}
                                 className="bg-white/60 backdrop-blur-md rounded-2xl p-5 hover:bg-green-100 transition-colors border border-green-200 shadow-lg"
+                                className="bg-white/60 backdrop-blur-md rounded-2xl p-5 hover:bg-green-100 transition-colors border border-green-200 shadow-lg"
                             >
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex-1">
@@ -325,7 +351,10 @@ export default function AgricultureAssessmentPage() {
                                             <span
                                                 className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${item.type === "skill"
                                                         ? "bg-green-100 text-green-700"
+                                                        ? "bg-green-100 text-green-700"
                                                         : item.type === "project"
+                                                            ? "bg-green-200 text-green-800"
+                                                            : "bg-green-50 text-green-600"
                                                             ? "bg-green-200 text-green-800"
                                                             : "bg-green-50 text-green-600"
                                                     }`}
@@ -334,7 +363,9 @@ export default function AgricultureAssessmentPage() {
                                             </span>
                                         </div>
                                         <h3 className="font-semibold text-lg text-slate-900">{item.name}</h3>
+                                        <h3 className="font-semibold text-lg text-slate-900">{item.name}</h3>
                                         {item.category && (
+                                            <p className="text-sm text-slate-500 mt-1">
                                             <p className="text-sm text-slate-500 mt-1">
                                                 {item.category.replace(/_/g, " ")}
                                             </p>
@@ -342,11 +373,13 @@ export default function AgricultureAssessmentPage() {
                                     </div>
                                     <div className="text-right ml-4">
                                         <p className="text-3xl font-bold text-green-600">
+                                        <p className="text-3xl font-bold text-green-600">
                                             {item.percentage}%
                                         </p>
                                     </div>
                                 </div>
 
+                                <div className="w-full bg-green-100 rounded-full h-2.5 overflow-hidden">
                                 <div className="w-full bg-green-100 rounded-full h-2.5 overflow-hidden">
                                     <div
                                         className={`h-full transition-all ${item.type === "skill"
