@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Activity, Award, Briefcase, TrendingUp, Target, BarChart3, Calendar } from "lucide-react";
+import { Activity, Award, Briefcase, TrendingUp, Target, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import CourseCard from "@/components/course-card";
 

@@ -78,7 +78,7 @@ export default function ChatbotPage() {
                 };
                 setMessages((prev) => [...prev, assistantMessage]);
             }
-        } catch (error) {
+        } catch {
             const assistantMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",

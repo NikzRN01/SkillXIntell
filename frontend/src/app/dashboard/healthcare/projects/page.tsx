@@ -200,7 +200,7 @@ export default function HealthcareProjectsPage() {
             startDate: project.startDate.split('T')[0],
             endDate: project.endDate ? project.endDate.split('T')[0] : "",
             status: project.status,
-            teamSize: project.teamSize || 1,
+            teamSize: parseInt(project.teamSize || "1", 10),
             role: project.role || "",
             repositoryUrl: project.repositoryUrl || "",
             liveUrl: project.liveUrl || "",
@@ -397,7 +397,7 @@ export default function HealthcareProjectsPage() {
                                 <span className={`inline-block px-3 py-1 text-xs rounded-xl font-semibold border ${getStatusColor(project.status)}`}>
                                     {project.status.replace("_", " ")}
                                 </span>
-                                {project.teamSize && project.teamSize > 1 && (
+                                {project.teamSize && parseInt(project.teamSize) > 1 && (
                                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-muted text-muted-foreground text-xs rounded-xl font-semibold">
                                         <Users className="h-3 w-3" />
                                         Team of {project.teamSize}
