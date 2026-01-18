@@ -163,6 +163,9 @@ export default function HealthcareDashboard() {
                             <Activity className="h-8 w-8" />
                         </div>
                         <div>
+                            <Link href="/dashboard" className="text-blue-600 hover:text-blue-700 font-semibold text-sm transition-colors inline-block mb-1">
+                                ← Back to Dashboard
+                            </Link>
                             <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">Sector</p>
                             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight">
                                 Healthcare Informatics
