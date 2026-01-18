@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { verificationApi } from "@/lib/api";
-import { clearAuthStorage, useStoredUser, useStoredToken } from "@/lib/auth";
+import { useStoredUser, useStoredToken } from "@/lib/auth";
 
 type VerificationRequest = {
     id: string;

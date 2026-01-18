@@ -156,14 +156,13 @@ export default function ProfileEditPage() {
 
         if (!token) {
             setError("You must be logged in to update your profile.");
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md transition-colors disabled:opacity-50"
+            return;
         }
 
         const interests = interestsText
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean);
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md transition-colors disabled:opacity-50"
         const targetSectors: string[] = [];
         if (sectorHealthcare) targetSectors.push("HEALTHCARE");
         if (sectorAgriculture) targetSectors.push("AGRICULTURE");
@@ -257,7 +256,6 @@ export default function ProfileEditPage() {
                         </div>
                     </div>
                 </div>
-            </div>
 
                 {/* Basic Info Card */}
                 <div className="bg-white/90 dark:bg-gray-800/90 rounded-2xl shadow-lg p-6 space-y-4 border border-slate-200/60">
