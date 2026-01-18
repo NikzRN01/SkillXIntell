@@ -322,7 +322,6 @@ export default function ProfileEditPage() {
                             <button type="button" onClick={handleUpload} disabled={isSaving || !selectedFile} className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-semibold shadow transition-colors disabled:opacity-50 disabled:cursor-not-allowed">{isSaving ? "Uploading…" : "Upload avatar"}</button>
                         </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Supported: images up to 5MB.</p>
                 </div>
             </div>
 
@@ -363,12 +362,12 @@ export default function ProfileEditPage() {
                     <h2 className="text-xl font-semibold text-slate-900 mb-3">Profile Details</h2>
                     <div className="grid gap-3 md:grid-cols-2">
                         <div className="flex flex-col gap-1 md:col-span-1">
-                            <label className="text-sm font-medium text-gray-700">Location</label>
-                            <input value={location} onChange={(e) => setLocation(e.target.value)} className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm" placeholder="e.g., Bangalore, IN" disabled={isSaving} />
-                        </div>
-                        <div className="flex flex-col gap-1 md:col-span-1">
                             <label className="text-sm font-medium text-gray-700">Bio</label>
                             <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="w-full min-h-20 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm" placeholder="Tell us about yourself" disabled={isSaving} />
+                        </div>
+                        <div className="flex flex-col gap-1 md:col-span-1">
+                            <label className="text-sm font-medium text-gray-700">Location</label>
+                            <input value={location} onChange={(e) => setLocation(e.target.value)} className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm" placeholder="e.g., Bangalore, IN" disabled={isSaving} />
                         </div>
                         <div className="flex flex-col gap-1 md:col-span-2">
                             <label className="text-sm font-medium text-gray-700">Interests (comma separated)</label>
