@@ -72,12 +72,6 @@ function formatCalculatedAt(value?: string): string {
     }).format(date);
 }
 
-function scoreChipClass(score: number): string {
-    if (score >= 75) return "bg-orange-600 text-white";
-    if (score >= 50) return "bg-orange-200 text-orange-950";
-    return "bg-orange-100 text-orange-900";
-}
-
 function extractRecommendations(payload: unknown): Recommendation[] {
     const maybeRecs = (value: unknown): unknown => {
         if (!value || typeof value !== "object") return undefined;
