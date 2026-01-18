@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface SectorData {
     sector: string;
@@ -21,13 +21,15 @@ const ORANGE_PALETTE = {
     dark: '#EA580C',       // Dark orange
 };
 
-// Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: any) => {
+
+
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-white/95 backdrop-blur-sm border border-orange-200 rounded-lg shadow-lg p-4 min-w-[220px]">
                 <p className="font-semibold text-slate-900 text-sm mb-2">{label}</p>
-                {payload.map((entry: any, index: number) => (
+                {payload.map((entry, index) => (
                     <p key={index} className="text-xs font-medium text-slate-700 mb-1">
                         <span className="inline-block w-3 h-3 rounded mr-2" style={{ backgroundColor: entry.color }}></span>
                         {entry.name}: <span className="font-bold text-orange-600">{entry.value}%</span>
@@ -39,12 +41,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null;
 };
 
-// Custom legend component
-const CustomLegend = (props: any) => {
+const CustomLegend = (props: LegendProps) => {
     const { payload } = props;
     return (
         <div className="flex flex-wrap justify-center gap-6 mt-6 pb-4">
-            {payload.map((entry: any, index: number) => (
+            {payload && payload.map((entry, index) => (
                 <div key={index} className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded" style={{ backgroundColor: entry.color }}></div>
                     <span className="text-sm font-medium text-slate-700">{entry.value}</span>
@@ -56,8 +57,8 @@ const CustomLegend = (props: any) => {
 
 export function SectorPerformanceChart({ data, height = 450 }: SectorPerformanceChartProps) {
     // Centered Y-axis label renderer
-    const renderYAxisLabel = ({ viewBox }: any) => {
-        const { x, y, width, height } = viewBox || {};
+    const renderYAxisLabel = ({ viewBox }: { viewBox?: { x?: number; y?: number; width?: number; height?: number } }) => {
+        const { x, y, height } = viewBox || {};
         const cx = (x ?? 0) + 24; // nudge inside the chart for visibility
         const cy = (y ?? 0) + (height ?? 0) / 2;
         return (

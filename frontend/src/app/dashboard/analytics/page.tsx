@@ -1,117 +1,80 @@
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-import { BarChart3, TrendingUp, Target, Award, Brain, RefreshCw, Activity, Sprout, Building2, Newspaper, Briefcase, Sparkles, MessageCircle } from "lucide-react";
-import Link from "next/link";
-import { SectorPerformanceChart } from "@/components/sector-performance-chart";
-
-interface SectorAnalytics {
-    overallScore: number;
-    careerReadiness: number;
-    industryAlignment: number;
-}
-
-interface Recommendation {
-    type: "news" | "opportunity";
-    title: string;
-    description: string;
-    source?: string;
-    url?: string;
-    date?: string;
-}
-
-interface CrossSectorAnalytics {
-    overall: {
-        totalSkills: number;
-        totalProjects: number;
-        totalCertifications: number;
-        averageReadiness: number;
-        sectorsActive: number;
-    };
-    bySector: {
-        HEALTHCARE?: SectorAnalytics;
-        AGRICULTURE?: SectorAnalytics;
-        URBAN?: SectorAnalytics;
-    };
-}
-
-export default function AnalyticsDashboard() {
-    const [analytics, setAnalytics] = useState<CrossSectorAnalytics | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [generating, setGenerating] = useState(false);
-    const [healthcareRecs, setHealthcareRecs] = useState<Recommendation[]>([]);
-    const [agricultureRecs, setAgricultureRecs] = useState<Recommendation[]>([]);
-    const [urbanRecs, setUrbanRecs] = useState<Recommendation[]>([]);
-    const [loadingRecs, setLoadingRecs] = useState<{ [key: string]: boolean }>({});
-
-    const fetchAnalytics = useCallback(async () => {
-        try {
-            const token = localStorage.getItem("token");
-            const headers = {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            };
-
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/analytics/cross-sector/overview`,
-                { headers }
-            );
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    // Transform the data to match our interface
-                    const bySector: CrossSectorAnalytics["bySector"] = {};
-
-                    if (data.data.bySector.HEALTHCARE) {
-                        bySector.HEALTHCARE = {
-                            overallScore: data.data.bySector.HEALTHCARE.overallScore || 0,
-                            careerReadiness: data.data.bySector.HEALTHCARE.careerReadiness || 0,
-                            industryAlignment: data.data.bySector.HEALTHCARE.industryAlignment || 0,
-                        };
-                    }
-                    if (data.data.bySector.AGRICULTURE) {
-                        bySector.AGRICULTURE = {
-                            overallScore: data.data.bySector.AGRICULTURE.overallScore || 0,
-                            careerReadiness: data.data.bySector.AGRICULTURE.careerReadiness || 0,
-                            industryAlignment: data.data.bySector.AGRICULTURE.industryAlignment || 0,
-                        };
-                    }
-                    if (data.data.bySector.URBAN) {
-                        bySector.URBAN = {
-                            overallScore: data.data.bySector.URBAN.overallScore || 0,
-                            careerReadiness: data.data.bySector.URBAN.careerReadiness || 0,
-                            industryAlignment: data.data.bySector.URBAN.industryAlignment || 0,
-                        };
-                    }
-
-                    setAnalytics({
-                        overall: data.data.overall,
-                        bySector,
-                    });
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching analytics:", error);
-            // Set default empty analytics
-            setAnalytics({
-                overall: {
-                    totalSkills: 0,
-                    totalProjects: 0,
-                    totalCertifications: 0,
-                    averageReadiness: 0,
-                    sectorsActive: 0,
-                },
-                bySector: {},
-            });
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchAnalytics();
-    }, [fetchAnalytics]);
+                            {(() => {
+                                if (loadingRecs.HEALTHCARE) {
+                                    return (
+                                        <div className="flex items-center justify-center py-12">
+                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                                        </div>
+                                    );
+                                }
+                                if (healthcareRecs.length === 0) {
+                                    return (
+                                        <div className="text-center py-12">
+                                            <Sparkles className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                                            <p className="text-slate-600 text-lg font-medium">Fetching AI recommendations...</p>
+                                        </div>
+                                    );
+                                }
+                                const news = healthcareRecs.filter(r => r.type === "news").slice(0, 3);
+                                const opportunities = healthcareRecs.filter(r => r.type === "opportunity").slice(0, 3);
+                                const total = Math.min(news.length + opportunities.length, 5);
+                                return (
+                                    <>
+                                        {news.length > 0 && (
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <Newspaper className="h-5 w-5 text-blue-600" />
+                                                    <h3 className="text-sm font-bold text-slate-700">Industry News & Trends</h3>
+                                                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{news.length}</span>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {news.map((rec, index) => (
+                                                        <div key={index} className="p-4 rounded-xl border border-blue-100 bg-blue-50/50 shadow-sm hover:shadow-md transition-shadow">
+                                                            <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                            <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                            {rec.source && (
+                                                                <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                            )}
+                                                            {rec.url && (
+                                                                <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                                    Learn more →
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        {opportunities.length > 0 && (
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <Briefcase className="h-5 w-5 text-blue-600" />
+                                                    <h3 className="text-sm font-bold text-slate-700">Career Opportunities</h3>
+                                                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{opportunities.length}</span>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {opportunities.map((rec, index) => (
+                                                        <div key={index} className="p-4 rounded-xl border border-blue-200 bg-white/80 shadow-sm hover:shadow-md transition-shadow">
+                                                            <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                            <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                            {rec.source && (
+                                                                <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                            )}
+                                                            {rec.url && (
+                                                                <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                                    Learn more →
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        )}
+                                        <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
+                                            Showing {total} of {Math.min(healthcareRecs.length, 5)} recommendations
+                                        </div>
+                                    </>
+                                );
+                            })()}
 
     const fetchRecommendations = async (sector: string, score: number) => {
         if (score === 0) return [];
@@ -176,63 +139,63 @@ export default function AnalyticsDashboard() {
             );
 
             // Refetch the analytics
-            await fetchAnalytics();
-        } catch (error) {
-            console.error("Error generating analytics:", error);
-        } finally {
-            setGenerating(false);
-        }
-    };
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-100">
-                <div className="text-muted-foreground">Loading analytics...</div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="space-y-8">
-            {/* Hero */}
-            <div className="relative overflow-hidden rounded-2xl border border-orange-200/80 bg-white/80 shadow-2xl backdrop-blur-xl p-6 md:p-8 mb-2">
-                <div className="absolute inset-0 pointer-events-none" aria-hidden>
-                    <div
-                        className="absolute inset-0 opacity-70"
-                        style={{
-                            backgroundImage:
-                                "radial-gradient(circle at 18% 15%, rgba(251,146,60,0.13), transparent 40%), radial-gradient(circle at 82% 5%, rgba(251,191,36,0.13), transparent 36%), radial-gradient(circle at 45% 110%, rgba(251,113,133,0.12), transparent 42%)",
-                        }}
-                    ></div>
-                    <div
-                        className="absolute inset-0 opacity-35"
-                        style={{
-                            backgroundImage:
-                                "linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px), linear-gradient(180deg, rgba(15,23,42,0.05) 1px, transparent 1px)",
-                            backgroundSize: "22px 22px",
-                        }}
-                    ></div>
-                </div>
-                <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-200/60">
-                            <BarChart3 className="h-8 w-8" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold text-orange-700 uppercase tracking-wide">Sector</p>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight">
-                                Analytics & Insights
-                            </h1>
-                            <p className="text-slate-600 font-medium">Cross-sector skill intelligence and career readiness</p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={generateAllAnalytics}
-                        disabled={generating}
-                        className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-all font-semibold shadow-md"
-                    >
-                        <RefreshCw className={`h-4 w-4 ${generating ? "animate-spin" : ""}`} />
-                        {generating ? "Generating..." : "Refresh Analytics"}
+                                return (
+                                    <>
+                                        {news.length > 0 && (
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <Newspaper className="h-5 w-5 text-blue-600" />
+                                                    <h3 className="text-sm font-bold text-slate-700">Industry News & Trends</h3>
+                                                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{news.length}</span>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {news.map((rec, index) => (
+                                                        <div key={index} className="p-4 rounded-xl border border-blue-100 bg-blue-50/50 shadow-sm hover:shadow-md transition-shadow">
+                                                            <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                            <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                            {rec.source && (
+                                                                <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                            )}
+                                                            {rec.url && (
+                                                                <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                                    Learn more →
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {opportunities.length > 0 && (
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <Briefcase className="h-5 w-5 text-blue-600" />
+                                                    <h3 className="text-sm font-bold text-slate-700">Career Opportunities</h3>
+                                                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{opportunities.length}</span>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {opportunities.map((rec, index) => (
+                                                        <div key={index} className="p-4 rounded-xl border border-blue-200 bg-white/80 shadow-sm hover:shadow-md transition-shadow">
+                                                            <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
+                                                            <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
+                                                            {rec.source && (
+                                                                <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
+                                                            )}
+                                                            {rec.url && (
+                                                                <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                                                                    Learn more →
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
+                                            Showing {total} of {Math.min(healthcareRecs.length, 5)} recommendations
+                                        </div>
+                                    </>
+                                );
                     </button>
                 </div>
             </div>
@@ -435,19 +398,12 @@ export default function AnalyticsDashboard() {
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-sm">
-                                            🏙️
+                                            {/* Place an icon or text here if needed */}
                                         </div>
-                                        <div>
-                                            <h3 className="font-bold text-sm text-slate-900">Urban & Smart Cities</h3>
-                                            <p className="text-xs text-slate-600">Urban development readiness</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-2xl font-black text-orange-600">
-                                            {analytics.bySector.URBAN.overallScore}%
-                                        </div>
+                                        {/* You can add more content here if needed */}
                                     </div>
                                 </div>
+                                {/* If you want to show loading or recommendations for URBAN, add them here, not inside the icon div */}
                                 <div className="grid grid-cols-2 gap-2">
                                     <div className="bg-white rounded-lg p-4 border border-orange-100/40">
                                         <div className="flex justify-between items-center mb-3">
@@ -528,7 +484,6 @@ export default function AnalyticsDashboard() {
                                         const news = healthcareRecs.filter(r => r.type === "news").slice(0, 3);
                                         const opportunities = healthcareRecs.filter(r => r.type === "opportunity").slice(0, 3);
                                         const total = Math.min(news.length + opportunities.length, 5);
-
                                         return (
                                             <>
                                                 {news.length > 0 && (
@@ -586,89 +541,10 @@ export default function AnalyticsDashboard() {
                                                 <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
                                                     Showing {total} of {Math.min(healthcareRecs.length, 5)} recommendations
                                                 </div>
-                                            </>
-                                        );
-                                    })()}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                        {loadingRecs.HEALTHCARE ? (
-                            <div className="flex items-center justify-center py-12">
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                            </div>
-                        ) : healthcareRecs.length === 0 ? (
-                            <div className="text-center py-12">
-                                <Sparkles className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-                                <p className="text-slate-600 text-lg font-medium">Fetching AI recommendations...</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-6">
-                                {(() => {
-                                    const news = healthcareRecs.filter(r => r.type === "news").slice(0, 3);
-                                    const opportunities = healthcareRecs.filter(r => r.type === "opportunity").slice(0, 3);
-                                    const total = Math.min(news.length + opportunities.length, 5);
-                                    
-                                    return (
-                                        <>
-                                            {news.length > 0 && (
-                                                <div>
-                                                    <div className="flex items-center gap-2 mb-3">
-                                                        <Newspaper className="h-5 w-5 text-blue-600" />
-                                                        <h3 className="text-sm font-bold text-slate-700">Industry News & Trends</h3>
-                                                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{news.length}</span>
-                                                    </div>
-                                                    <div className="space-y-3">
-                                                        {news.map((rec, index) => (
-                                                            <div key={index} className="p-4 rounded-xl border border-blue-100 bg-blue-50/50 shadow-sm hover:shadow-md transition-shadow">
-                                                                <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
-                                                                <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
-                                                                {rec.source && (
-                                                                    <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
-                                                                )}
-                                                                {rec.url && (
-                                                                    <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
-                                                                        Learn more →
-                                                                    </a>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            
-                                            {opportunities.length > 0 && (
-                                                <div>
-                                                    <div className="flex items-center gap-2 mb-3">
-                                                        <Briefcase className="h-5 w-5 text-blue-600" />
-                                                        <h3 className="text-sm font-bold text-slate-700">Career Opportunities</h3>
-                                                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{opportunities.length}</span>
-                                                    </div>
-                                                    <div className="space-y-3">
-                                                        {opportunities.map((rec, index) => (
-                                                            <div key={index} className="p-4 rounded-xl border border-blue-200 bg-white/80 shadow-sm hover:shadow-md transition-shadow">
-                                                                <h4 className="font-semibold text-slate-900 text-sm">{rec.title}</h4>
-                                                                <p className="text-xs text-slate-600 mt-1">{rec.description}</p>
-                                                                {rec.source && (
-                                                                    <p className="text-xs text-slate-500 mt-2">{rec.source} {rec.date && `• ${rec.date}`}</p>
-                                                                )}
-                                                                {rec.url && (
-                                                                    <a href={rec.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 inline-block">
-                                                                        Learn more →
-                                                                    </a>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
+                                            </div>
                                         </>
-                                    );
-                                })()}
-                            </div>
-                        )}
-                    </div>
+                                    })()}
+                        </div>
                 )}
 
                 {/* Agriculture Recommendations */}
