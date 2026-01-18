@@ -53,19 +53,30 @@ export default function ChatbotPage() {
         setLoading(true);
 
         try {
-            // Simulated AI response - replace with actual API call
-            const response = await fetch("/api/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: input }),
-            });
+            const token = localStorage.getItem("token");
+            
+            // Call the new Gemini-powered chat endpoint
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/chat/message`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        message: input,
+                        conversationHistory: messages,
+                    }),
+                }
+            );
 
             if (response.ok) {
                 const data = await response.json();
                 const assistantMessage: Message = {
                     id: (Date.now() + 1).toString(),
                     role: "assistant",
-                    content: data.reply || "I'm processing your request. Please try again.",
+                    content: data.reply || "I'm having trouble generating a response. Please try again.",
                     timestamp: new Date(),
                 };
                 setMessages((prev) => [...prev, assistantMessage]);
@@ -73,16 +84,17 @@ export default function ChatbotPage() {
                 const assistantMessage: Message = {
                     id: (Date.now() + 1).toString(),
                     role: "assistant",
-                    content: "I'm currently learning from your interactions. Feel free to ask about career development, skills, or personalized recommendations!",
+                    content: "I encountered an error processing your request. Please try again!",
                     timestamp: new Date(),
                 };
                 setMessages((prev) => [...prev, assistantMessage]);
             }
         } catch (error) {
+            console.error("Chat error:", error);
             const assistantMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
-                content: "I'm learning and will get better at answering questions. What else would you like to know?",
+                content: "I'm currently unavailable. Please try again later.",
                 timestamp: new Date(),
             };
             setMessages((prev) => [...prev, assistantMessage]);

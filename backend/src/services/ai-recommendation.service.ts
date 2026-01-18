@@ -1,6 +1,9 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import axios from 'axios';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
+const REFERER = process.env.OPENROUTER_SITE_URL || 'http://localhost';
+const TITLE = process.env.OPENROUTER_TITLE || 'SkillXIntell';
 
 interface RecommendationRequest {
     sector: string;
@@ -23,12 +26,10 @@ export const generateAIRecommendations = async (
     data: RecommendationRequest
 ): Promise<Recommendation[]> => {
     try {
-        if (!process.env.GEMINI_API_KEY) {
-            console.warn('GEMINI_API_KEY not set, returning fallback recommendations');
+        if (!process.env.OPENROUTER_API_KEY) {
+            console.warn('OPENROUTER_API_KEY not set, returning fallback recommendations');
             return getFallbackRecommendations(data.sector, data.competencyScore);
         }
-
-        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
         const prompt = `You are a career advisor specializing in ${data.sector.toLowerCase()} technology sector.
 
@@ -79,14 +80,38 @@ CRITICAL: Return ONLY valid JSON array with exactly 5 items:
 ]`;
 
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
+        // Log detailed error payloads for diagnostics
+        const result = await axios.post(
+            OPENROUTER_URL,
+            {
+                model: DEFAULT_MODEL,
+                messages: [
+                    { role: 'system', content: 'You are SkillXIntell career advisor. Return exactly 5 JSON items as specified.' },
+                    { role: 'user', content: prompt },
+                ],
+                max_tokens: 800,
+                temperature: 0.7,
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': REFERER,
+                    'X-Title': TITLE,
+                },
+                timeout: 30000,
+            }
+        );
+
+        const text = result.data?.choices?.[0]?.message?.content;
 
         // Parse JSON from response
         const jsonMatch = text.match(/\[[\s\S]*\]/);
         if (!jsonMatch) {
-            console.error('Failed to parse Gemini response:', text);
+            console.error('Failed to parse OpenRouter response text:', text);
+            if ((result as any)?.data?.error) {
+                console.error('OpenRouter API error object:', (result as any).data.error);
+            }
             return getFallbackRecommendations(data.sector, data.competencyScore);
         }
 

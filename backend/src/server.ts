@@ -8,6 +8,7 @@ import healthcareRoutes from './routes/healthcare.routes';
 import agricultureRoutes from './routes/agriculture.routes';
 import urbanRoutes from './routes/urban.routes';
 import analyticsRoutes from './routes/analytics.routes';
+import chatRoutes from './routes/chat.routes';
 
 const app: Application = express();
 
@@ -45,6 +46,7 @@ app.use('/api/healthcare', healthcareRoutes);
 app.use('/api/agriculture', agricultureRoutes);
 app.use('/api/urban', urbanRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Start server
 const PORT = config.port;

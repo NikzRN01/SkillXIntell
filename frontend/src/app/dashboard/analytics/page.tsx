@@ -533,10 +533,6 @@ export default function AnalyticsDashboard() {
                                                     </div>
                                                 </div>
                                             )}
-                                            
-                                            <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
-                                                Showing {total} of {Math.min(healthcareRecs.length, 5)} recommendations
-                                            </div>
                                         </>
                                     );
                                 })()}
@@ -629,10 +625,6 @@ export default function AnalyticsDashboard() {
                                                     </div>
                                                 </div>
                                             )}
-                                            
-                                            <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
-                                                Showing {total} of {Math.min(agricultureRecs.length, 5)} recommendations
-                                            </div>
                                         </>
                                     );
                                 })()}
@@ -725,10 +717,6 @@ export default function AnalyticsDashboard() {
                                                     </div>
                                                 </div>
                                             )}
-                                            
-                                            <div className="flex items-center justify-center text-xs text-slate-500 pt-2">
-                                                Showing {total} of {Math.min(urbanRecs.length, 5)} recommendations
-                                            </div>
                                         </>
                                     );
                                 })()}
@@ -736,6 +724,22 @@ export default function AnalyticsDashboard() {
                         )}
                     </div>
                 )}
+                </div>
+            </div>
+
+            {/* Score Calculation Footer */}
+            <div className="mt-12 space-y-2 text-xs text-slate-600">
+                <div className="flex items-start gap-2">
+                    <span className="font-bold text-slate-400">*</span>
+                    <p><strong>Overall Score:</strong> (Avg Proficiency / 5) × 40 + Min(Certifications × 10, 30) + Min(Completed Projects × 6, 30)</p>
+                </div>
+                <div className="flex items-start gap-2">
+                    <span className="font-bold text-slate-400">*</span>
+                    <p><strong>Career Readiness:</strong> (Verified Skills / Total Skills) × 50% + Min(Active Certifications × 10, 50%)</p>
+                </div>
+                <div className="flex items-start gap-2">
+                    <span className="font-bold text-slate-400">*</span>
+                    <p><strong>Industry Alignment:</strong> (Skill Count / 10) × 30% + (Avg Proficiency / 5) × 30% + Min(Completed Projects × 8, 25%) + Min(Public Projects × 5, 15%)</p>
                 </div>
             </div>
         </div>

@@ -31,6 +31,10 @@ export const config = {
         // Default to the expected RapidAPI host so a stale .env won't point to the old domain
         host: process.env.RAPIDAPI_HOST || 'paid-udemy-course-for-free.p.rapidapi.com',
     },
+
+    gemini: {
+        apiKey: process.env.GEMINI_API_KEY || '',
+    },
 };
 
 // Validate required environment variables
