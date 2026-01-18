@@ -1,6 +1,7 @@
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface SectorData {
     sector: string;
@@ -33,12 +34,15 @@ type CustomTooltipProps = {
     label?: string;
 };
 
-// Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+
+
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-white/95 backdrop-blur-sm border border-orange-200 rounded-lg shadow-lg p-4 min-w-[220px]">
                 <p className="font-semibold text-slate-900 text-sm mb-2">{label}</p>
+                {payload.map((entry, index) => (
                 {payload.map((entry, index) => (
                     <p key={index} className="text-xs font-medium text-slate-700 mb-1">
                         <span
@@ -63,11 +67,11 @@ type CustomLegendProps = {
     payload: LegendEntry[];
 };
 
-// Custom legend component
-const CustomLegend = ({ payload }: CustomLegendProps) => {
+const CustomLegend = (props: LegendProps) => {
+    const { payload } = props;
     return (
         <div className="flex flex-wrap justify-center gap-6 mt-6 pb-4">
-            {payload.map((entry, index) => (
+            {payload && payload.map((entry, index) => (
                 <div key={index} className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded" style={{ backgroundColor: entry.color }}></div>
                     <span className="text-sm font-medium text-slate-700">{entry.value}</span>
@@ -87,7 +91,7 @@ export function SectorPerformanceChart({ data, height = 450 }: SectorPerformance
     };
 
     // Centered Y-axis label renderer
-    const renderYAxisLabel = ({ viewBox }: YAxisLabelProps) => {
+    const renderYAxisLabel = ({ viewBox }: { viewBox?: { x?: number; y?: number; width?: number; height?: number } }) => {
         const { x, y, height } = viewBox || {};
         const cx = (x ?? 0) + 24; // nudge inside the chart for visibility
         const cy = (y ?? 0) + (height ?? 0) / 2;
